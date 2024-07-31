@@ -1,5 +1,5 @@
 # Define the command for golangci-lint and goimports
-MODULES :=  coffee equipment recipe review user coffee coffee
+MODULES :=
 GOLANGCI_LINT = $(shell which golangci-lint)
 GOIMPORTS = $(shell which goimports)
 
