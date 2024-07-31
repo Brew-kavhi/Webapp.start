@@ -1,0 +1,31 @@
+linters:
+  enable:
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - typecheck
+    - unused
+    - gofmt
+    - goimports
+
+linters-settings:
+  gofmt:
+    simplify: true
+
+run:
+  tests: true
+  # Include or exclude specific directories or patterns as needed
+
+issues:
+  exclude-rules:
+    - linters:
+        - errcheck
+      text: "ignore Close() error"
+
+output:
+  formats: colored-line-number
+  sort-results: true
+  print-issued-lines: true
+
