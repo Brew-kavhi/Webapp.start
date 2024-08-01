@@ -1,26 +1,90 @@
-# You can override the included template(s) by including variable overrides
-# SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
-# Secret Detection customization: https://docs.gitlab.com/ee/user/application_security/secret_detection/#customizing-settings
-# Dependency Scanning customization: https://docs.gitlab.com/ee/user/application_security/dependency_scanning/#customizing-the-dependency-scanning-settings
-# Container Scanning customization: https://docs.gitlab.com/ee/user/application_security/container_scanning/#customizing-the-container-scanning-settings
-# Note that environment variables can be set in several places
-# See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
 stages:
-- build
-- test
-- deploy
-- review
-- dast
-- staging
-- canary
-- production
-- incremental rollout 10%
-- incremental rollout 25%
-- incremental rollout 50%
-- incremental rollout 100%
-- performance
-- cleanup
-sast:
-  stage: test
-include:
-- template: Auto-DevOps.gitlab-ci.yml
+  - lint
+  - format
+  - validate_changes
+
+variables:
+  FRONTEND_FOLDER: "frontend"
+  SERVICES_FOLDER: "services"
+
+    # validate_changes:
+  stage: validate_changes
+  script:
+    script:
+    - echo "Validating changed files"
+    - |
+      CHANGED_FILES=$(git diff --name-only $CI_COMMIT_BEFORE_SHA $CI_COMMIT_SHA)
+      echo "Changed files: $CHANGED_FILES"
+      FRONTEND_CHANGED=false
+      SERVICE_CHANGED=false
+      SERVICE_NAME=""
+      for FILE in $CHANGED_FILES; do
+        if [[ $FILE == $FRONTEND_FOLDER/* ]]; then
+          FRONTEND_CHANGED=true
+        elif [[ $FILE == $SERVICES_FOLDER/* ]]; then
+          SERVICE=${FILE#"$SERVICES_FOLDER/"}  # Remove prefix "services/"
+          SERVICE=${SERVICE%%/*}  # Extract service name
+          if [[ $SERVICE_NAME == "" ]]; then
+            SERVICE_NAME=$SERVICE
+            SERVICE_CHANGED=true
+          elif [[ $SERVICE_NAME != $SERVICE ]]; then
+            echo "Error: Changes span multiple services: $SERVICE_NAME and $SERVICE"
+            exit 1
+          fi
+        else
+          echo "Error: Change detected outside of allowed folders ($FRONTEND_FOLDER and $SERVICES_FOLDER): $FILE"
+          exit 1
+        fi
+      done
+
+      if $FRONTEND_CHANGED && $SERVICE_CHANGED; then
+        echo "Error: Changes span both frontend and services"
+        exit 1
+      fi
+      
+      echo "FRONTEND_CHANGED=$FRONTEND_CHANGED" >> .env
+      echo "SERVICE_CHANGED=$SERVICE_CHANGED" >> .env
+      echo "SERVICE_NAME=$SERVICE_NAME" >> .env
+  artifacts:
+    reports:
+      dotenv: .env
+  only:
+    - merge_requests
+    - main
+
+
+# Define the lint job
+lint:
+  stage: lint
+  script:
+    - source .env
+    - |
+      if [ "$FRONTEND_CHANGED" = true ]; then
+        echo "Running npm run lint in $FRONTEND_FOLDER"
+        cd $FRONTEND_FOLDER && npm install && npm run lint
+      elif [ "$SERVICE_CHANGED" = true ]; then
+        echo "Running make lint in $SERVICES_FOLDER/$SERVICE_NAME"
+        cd $SERVICES_FOLDER && make lint-module module=$SERVICE_NAME
+      fi
+  dependencies:
+    - validate_changes
+  only:
+    - main
+
+# Define the format job
+format:
+  stage: format
+  script:
+     - |
+      if [ "$FRONTEND_CHANGED" = true ]; then
+        echo "running format for frontend"
+        cd $FRONTEND_FOLDER && npm install && npm run format
+      elif [ "$SERVICE_CHANGED" = true ]; then
+        echo "Running make format in $SERVICES_FOLDER/$SERVICE_NAME"
+        cd $SERVICES_FOLDER && make format-module module=$SERVICE_NAME
+      fi
+  dependencies:
+    - validate_changes
+  only:
+    - main
+
