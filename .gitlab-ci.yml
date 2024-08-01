@@ -2,6 +2,7 @@ stages:
   - validate_changes
   - lint
   - format
+  - testing
 
 variables:
   FRONTEND_FOLDER: "frontend"
@@ -79,6 +80,23 @@ format:
       elif [ "$SERVICE_CHANGED" = true ]; then
         echo "Running make format in $SERVICES_FOLDER/$SERVICE_NAME"
         cd $SERVICES_FOLDER && make format-module module=$SERVICE_NAME
+      fi
+  dependencies:
+    - validate_changes
+  only:
+    - main
+
+testing:
+  stage: testing
+  script:
+    - source validation.env
+    - |
+      if [ "$FRONTEND_CHANGED" = true ]; then
+        echo "running tests for frontend"
+        cd $FRONTEND_FOLDER && npm install && npm run test
+      elif [ "$SERVICE_CHANGED" = true ]; then
+        echo "Running make test in $SERVICES_FOLDER/$SERVICE_NAME"
+        cd $SERVICES_FOLDER && make test-module module=$SERVICE_NAME
       fi
   dependencies:
     - validate_changes
