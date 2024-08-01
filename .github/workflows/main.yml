@@ -18,7 +18,7 @@ jobs:
       service_name: ${{ steps.set_outputs.outputs.service_name }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Validate changed files
         id: set_outputs
@@ -52,9 +52,9 @@ jobs:
             exit 1
           fi
 
-          echo "::set-output name=frontend_changed::$FRONTEND_CHANGED"
-          echo "::set-output name=service_changed::$SERVICE_CHANGED"
-          echo "::set-output name=service_name::$SERVICE_NAME"
+          echo "frontend_changed=$FRONTEND_CHANGED" >> $GITHUB_OUTPUT
+          echo "service_changed=$SERVICE_CHANGED" >> $GITHUB_OUTPUT
+          echo "service_name=$SERVICE_NAME" >> $GITHUB_OUTPUT
 
   lint:
     name: Lint
@@ -62,7 +62,7 @@ jobs:
     needs: validate_changes
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
         if: ${{ needs.validate_changes.outputs.frontend_changed == 'true' }}
@@ -82,7 +82,7 @@ jobs:
     needs: validate_changes
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
         if: ${{ needs.validate_changes.outputs.frontend_changed == 'true' }}
