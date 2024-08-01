@@ -112,14 +112,23 @@ create-service:
 		echo "Usage: make create-service name=<service_name>"; \
 		exit 1; \
 	fi
-	@echo "Creating new service $(name)"
-	@mkdir -p $(name)
-	@cd $(name) && go mod init $(name)
-	@echo "Adding $(name) to MODULES"
-	@sed -i.bak '/^MODULES := / s/$$/ $(name)/' $(MAKEFILE_LIST)
-	@echo "$(name) added to MODULES"
-	@echo "Creating Dockerfile for $(name)"
-	@echo 'FROM golang:alpine\nWORKDIR /app\nCOPY . .\nRUN go build -o /$(name)\nCMD ["/$(name)"]' > $(name)/Dockerfile
+	@if echo $(MODULES) | grep -w $(name) > /dev/null; then \
+		echo "$(name) is already in MODULES"; \
+	else \
+		echo "Creating new service $(name)"; \
+		mkdir -p $(name); \
+		cd $(name) && go mod init $(name); \
+		echo "Adding $(name) to MODULES"; \
+		sed -i.bak '/^MODULES := / s/$$/ $(name)/' $(MAKEFILE_LIST); \
+		echo "$(name) added to MODULES"; \
+		echo "Creating Dockerfile for $(name)"; \
+		echo 'FROM golang:alpine\nWORKDIR /app\nCOPY . .\nRUN go build -o /$(name)\nCMD ["/$(name)"]' > $(name)/Dockerfile; \
+		echo "Creating main.go for $(name)"; \
+		echo 'package main\n\nimport "fmt"\n\nfunc main() {\n\tfmt.Println("Hello, world!")\n}' > $(name)/main.go; \
+		echo "Creating $(name)_test.go for $(name)"; \
+		echo 'package main\n\nimport "testing"\n\nfunc TestMain(t *testing.T) {\n\texpected := "Hello, world!"\n\tactual := "Hello, world!"\n\tif actual != expected {\n\t\tt.Errorf("expected %v, got %v", expected, actual)\n\t}\n}' > $(name)/$(name)_test.go; \
+	fi
+
 
 
 .PHONY: docker-build docker-up docker-down
