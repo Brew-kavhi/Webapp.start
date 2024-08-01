@@ -10,7 +10,6 @@ variables:
     # validate_changes:
   stage: validate_changes
   script:
-    script:
     - echo "Validating changed files"
     - |
       CHANGED_FILES=$(git diff --name-only $CI_COMMIT_SHA)
