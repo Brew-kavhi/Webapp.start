@@ -13,7 +13,7 @@ variables:
     script:
     - echo "Validating changed files"
     - |
-      CHANGED_FILES=$(git diff --name-only $CI_COMMIT_BEFORE_SHA $CI_COMMIT_SHA)
+      CHANGED_FILES=$(git diff --name-only $CI_COMMIT_SHA)
       echo "Changed files: $CHANGED_FILES"
       FRONTEND_CHANGED=false
       SERVICE_CHANGED=false
