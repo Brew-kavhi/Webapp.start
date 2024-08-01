@@ -16,9 +16,14 @@ This repository of course follows some rules, like never pushing un formatted co
 - [ ] run npm run format before pushing frontend code
 - [ ] run make lint-module module=<module_name>(in the service/ directory) before pushing service code
 - [ ] run make format-module module=<module_name>(in the service/ directory) before pushing service code
+<<<<<<< HEAD
 - [ ] changes must only be within one subfolder, so a commit can never contain changes in the frontend and a microservice or changes in tow different microservices.
 - [ ] if you add a module run make create-service name=<name> and add it to the modules list at the top of the makefile.
 The first 5 rules are enforced using github actions and gitlab pipelines.
+=======
+- [ ] if you add a module run make create-service name=<name> and add it to the modules list at the top of the makefile.
+- [ ] changes must only be within one subfolder, so a commit can never contain changes in the frontend and a microservice or changes in tow different microservices.
+>>>>>>> a277429 (fix(README): merge errors")
 
 ## Test and Deploy
 
@@ -27,4 +32,7 @@ Deployment is done with docker. Therefor each service creted with make already c
 
 ## Roadmap
 In the future this repo will also contain the necessary files for docker-compose so a docker cluster can be setup easily. Furthermore, we will enforce rules by github actions and gitlab pipelines. AS of now, only some basic actions and pipelines are defined on main branch, but for other branches there will be ore rules following.
+<<<<<<< HEAD
 
+=======
+>>>>>>> a277429 (fix(README): merge errors")
