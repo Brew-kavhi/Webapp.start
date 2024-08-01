@@ -1,13 +1,13 @@
 stages:
+  - validate_changes
   - lint
   - format
-  - validate_changes
 
 variables:
   FRONTEND_FOLDER: "frontend"
   SERVICES_FOLDER: "services"
 
-    # validate_changes:
+validate_changes:
   stage: validate_changes
   script:
     - echo "Validating changed files"
@@ -41,22 +41,20 @@ variables:
         exit 1
       fi
       
-      echo "FRONTEND_CHANGED=$FRONTEND_CHANGED" >> .env
-      echo "SERVICE_CHANGED=$SERVICE_CHANGED" >> .env
-      echo "SERVICE_NAME=$SERVICE_NAME" >> .env
+      echo "FRONTEND_CHANGED=$FRONTEND_CHANGED" >> validation.env
+      echo "SERVICE_CHANGED=$SERVICE_CHANGED" >> validation.env
+      echo "SERVICE_NAME=$SERVICE_NAME" >> validation.env
   artifacts:
     reports:
-      dotenv: .env
+      dotenv: validation.env
   only:
     - merge_requests
     - main
 
-
-# Define the lint job
 lint:
   stage: lint
   script:
-    - source .env
+    - source validation.env
     - |
       if [ "$FRONTEND_CHANGED" = true ]; then
         echo "Running npm run lint in $FRONTEND_FOLDER"
@@ -70,11 +68,11 @@ lint:
   only:
     - main
 
-# Define the format job
 format:
   stage: format
   script:
-     - |
+    - source validation.env
+    - |
       if [ "$FRONTEND_CHANGED" = true ]; then
         echo "running format for frontend"
         cd $FRONTEND_FOLDER && npm install && npm run format
