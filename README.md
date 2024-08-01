@@ -1,8 +1,12 @@
 # Brew.kavhi
 This repository serves as a starting point for a certain kind of webapp project. In this case, the backend is written in GO consisting of mutliple microservices that are each their own go module, to keep the benefits of microservices in terms of independence and manageability. The frontend will be in htmx with webcomponents, although this structure is not hard enforced, its just the way it is intended by the maintainer of this repo.
+<<<<<<< HEAD
 
 This repo comes with a basic eslinter configuration and prettier configuration as well s golang linter configuration. So you can use this repo as starting point and start coding right away without the hustle of setting up some configuration and stuff.
+=======
+>>>>>>> squash-branch
 
+This repo comes with a basic eslinter configuration and prettier configuration as well s golang linter configuration. So you can use this repo as starting point and start coding right away without the hustle of setting up some configuration and stuff.
 
 
 ## Getting started
@@ -17,9 +21,15 @@ This repository of course follows some rules, like never pushing un formatted co
 - [ ] run npm run format before pushing frontend code
 - [ ] run make lint-module module=<module_name>(in the service/ directory) before pushing service code
 - [ ] run make format-module module=<module_name>(in the service/ directory) before pushing service code
+<<<<<<< HEAD
 - [ ] if you add a module run make create-service name=<name> and add it to the modules list at the top of the makefile.
 - [ ] changes must only be within one subfolder, so a commit can never contain changes in the frontend and a microservice or changes in tow different microservices.
 
+=======
+- [ ] changes must only be within one subfolder, so a commit can never contain changes in the frontend and a microservice or changes in tow different microservices.
+- [ ] if you add a module run make create-service name=<name> and add it to the modules list at the top of the makefile.
+The first 5 rules are enforced using github actions and gitlab pipelines.
+>>>>>>> squash-branch
 
 ## Test and Deploy
 
@@ -27,6 +37,7 @@ This repository comes with testing frameworks, so to conduct the tests for the b
 Deployment is done with docker. Therefor each service creted with make already contains a basic dockerfile, that can be used to deploy this service.
 
 ## Roadmap
+<<<<<<< HEAD
 In the future this repo will also contain the necessary files for docker-compose so a docker cluster can be setup easily. Furthermore, we will enforce rules by github actions and gitlab pipelines. This will ship with later versions of this repository 
 
 ## Contributing
@@ -36,3 +47,7 @@ For people who want to make changes to your project, it's helpful to have some d
 
 You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
 
+=======
+In the future this repo will also contain the necessary files for docker-compose so a docker cluster can be setup easily. Furthermore, we will enforce rules by github actions and gitlab pipelines. AS of now, only some basic actions and pipelines are defined on main branch, but for other branches there will be ore rules following.
+
+>>>>>>> squash-branch
