@@ -227,6 +227,7 @@
     "prompts": "^2.4.2",
     "psl": "^1.9.0",
     "punycode": "^2.3.1",
+    "pupeteer": "^0.0.1",
     "pure-rand": "^6.1.0",
     "querystringify": "^2.2.0",
     "queue-microtask": "^1.2.3",
@@ -303,6 +304,8 @@
   },
   "scripts": {
     "test": "jest",
+    "test-integration": "echo 'not defined yet, We plan on using jest'",
+    "test-e2e": "echo 'not defined yet. We plan on using pupeteer'",
     "lint": "eslint 'js/**/*.js'",
     "format": "prettier --write 'js/**/*.js'",
     "lint:fix": "eslint --fix 'js/**/*.js'"
