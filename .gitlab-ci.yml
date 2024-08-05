@@ -103,3 +103,48 @@ testing:
   only:
     - main
 
+validate_source_branch:
+  stage: validate_changes
+  script:
+    - echo "Validating source branch"
+    - |
+      if [ "$CI_COMMIT_REF_NAME" == "review" ]; then
+        MR_SOURCE_BRANCH=$(curl --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/merge_requests?source_branch=$CI_COMMIT_REF_NAME" | jq -r '.[0].source_branch')
+        if [ "$MR_SOURCE_BRANCH" != "main" ]; then
+          echo "Error: Changes to review branch must come from main branch. Current source branch is $MR_SOURCE_BRANCH"
+          exit 1
+        fi
+      fi
+  only:
+    - review
+
+integration_test:
+  stage: integration_test
+  script:
+    - source validation.env
+    - |
+      if [ "$FRONTEND_CHANGED" = true ]; then
+        echo "Running integration tests for frontend"
+        cd $FRONTEND_FOLDER && npm install && npm run test-integration
+      elif [ "$SERVICE_CHANGED" = true ]; then
+        echo "Running integration tests for service $SERVICE_NAME"
+        cd $SERVICES_FOLDER && make test-integration module=$SERVICE_NAME
+      fi
+  dependencies:
+    - validate_changes
+  only:
+    - review
+
+e2e_test:
+  stage: e2e_test
+  script:
+    - source validation.env
+    - |
+      if [ "$FRONTEND_CHANGED" = true ]; then
+        echo "Running end-to-end tests for frontend"
+        cd $FRONTEND_FOLDER && npm install && npm run test-e2e
+      fi
+  dependencies:
+    - validate_changes
+  only:
+    - review

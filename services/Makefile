@@ -56,6 +56,23 @@ format-module:
 	@cd $(module) && goimports -w .
 
 # Build all modules
+.PHONY: test-integration test-integration-module
+test-integration:
+	@for module in $(MODULES); do \
+		echo "Building $$module"; \
+		cd $$module && go test -o ../bin/$$module; \
+		cd - > /dev/null; \
+	done
+
+# test-integration a specific module
+test-integration-module:
+	@if [ -z "$(module)" ]; then \
+		echo "Usage: make build-module module=<module_name>"; \
+		exit 1; \
+	fi
+	@echo "Building $(module)"
+	@cd $(module) && go test -o ../bin/$(module)
+# Build all modules
 .PHONY: build build-module
 build:
 	@for module in $(MODULES); do \
@@ -127,6 +144,7 @@ create-service:
 		echo 'package main\n\nimport "fmt"\n\nfunc main() {\n\tfmt.Println("Hello, world!")\n}' > $(name)/main.go; \
 		echo "Creating $(name)_test.go for $(name)"; \
 		echo 'package main\n\nimport "testing"\n\nfunc TestMain(t *testing.T) {\n\texpected := "Hello, world!"\n\tactual := "Hello, world!"\n\tif actual != expected {\n\t\tt.Errorf("expected %v, got %v", expected, actual)\n\t}\n}' > $(name)/$(name)_test.go; \
+		go get github.com/stretchr/testify; \
 	fi
 
 
