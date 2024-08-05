@@ -1,0 +1,66 @@
+name: Release Branch CI
+
+on:
+  push:
+    branches:
+      - release
+
+jobs:
+  validate_source_branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate source branch
+        run: |
+          PR_NUMBER=$(jq -r '.[0].number' <<< "$(gh pr list --base release --json number)")
+          if [ -z "$PR_NUMBER" ]; then
+            echo "No pull request found for the release branch"
+            exit 1
+          fi
+
+          SOURCE_BRANCH=$(jq -r '.head.ref' <<< "$(gh pr view $PR_NUMBER --json head)")
+          if [ "$SOURCE_BRANCH" != "review" ]; then
+            echo "Changes to release branch must come from review branch. Current source branch is $SOURCE_BRANCH"
+            exit 1
+          fi
+
+  test-deployment:
+    name: Test Deployment
+    runs-on: ubuntu-latest
+    needs: [validate_source_branch, integration_tests, e2e_tests]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker images
+        run: |
+          docker-compose -f docker-compose.yml build
+          docker-compose -f docker-compose.yml up -d
+
+      - name: Wait for services to be ready
+        run: |
+          # Wait for a few seconds to ensure services are up and running
+          sleep 30
+          # Optionally, add health checks for your services here
+
+      - name: Run integration tests against deployed services
+        run: |
+          # Replace with actual integration test commands
+          curl -f http://localhost:8081 || exit 1
+          curl -f http://localhost:8082 || exit 1
+          curl -f http://localhost || exit 1
+
+      - name: Tear down services
+        if: always()
+        run: docker-compose -f docker-compose.yml down
