@@ -3,6 +3,10 @@ MODULES :=
 GOLANGCI_LINT = $(shell which golangci-lint)
 GOIMPORTS = $(shell which goimports)
 
+COMPOSE_FILE = ../docker-compose.yml
+FRONTEND_DIR = frontend
+SERVICES_DIR = .
+
 # Ensure that golangci-lint is installed
 .PHONY: check-golangci-lint
 check-golangci-lint:
@@ -54,6 +58,26 @@ format-module:
 	fi
 	@echo "Formatting $(module)"
 	@cd $(module) && goimports -w .
+
+.PHONY: generate-compose
+generate-compose:
+	@echo "version: '3.8'" > $(COMPOSE_FILE)
+	@echo "services:" >> $(COMPOSE_FILE)
+	@echo "  frontend:" >> $(COMPOSE_FILE)
+	@echo "    build: ./$(FRONTEND_DIR)" >> $(COMPOSE_FILE)
+	@echo "    ports:" >> $(COMPOSE_FILE)
+	@echo "      - '80:80'" >> $(COMPOSE_FILE)
+	@echo "    environment:" >> $(COMPOSE_FILE)
+	@echo "      - ENV_VAR=example_value" >> $(COMPOSE_FILE)
+	@find $(SERVICES_DIR) -maxdepth 1 -type d -not -name '.*' -not -name '.' | while read service; do \
+		service_name=$$(basename $$service); \
+		echo "  $$service_name:" >> $(COMPOSE_FILE); \
+		echo "    build: ./services/$$service" >> $(COMPOSE_FILE); \
+		echo "    ports:" >> $(COMPOSE_FILE); \
+		echo "      - '808$${service_name##service}:8080'" >> $(COMPOSE_FILE); \
+		echo "    environment:" >> $(COMPOSE_FILE); \
+		echo "      - ENV_VAR=example_value" >> $(COMPOSE_FILE); \
+	done
 
 # Build all modules
 .PHONY: test-integration test-integration-module
