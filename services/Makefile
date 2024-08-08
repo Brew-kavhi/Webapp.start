@@ -158,22 +158,35 @@ create-service:
 	else \
 		echo "Creating new service $(name)"; \
 		mkdir -p $(name); \
+		echo "Initializing go module"; \	
 		cd $(name) && go mod init $(name); \
+		echo "Installing GORM (GO object relation manager)"; \
 		go get -u gorm.io/gorm; \
+		echo "Installing Kafka for event messaging"; \
+		go get github.com/segmentio/kafka-go; \
+		echo "Installing mux for routing"; \
+		go get github.com/gorilla/mux; \
 		echo "Adding $(name) to MODULES"; \
 		sed -i.bak '/^MODULES := / s/$$/ $(name)/' $(MAKEFILE_LIST); \
 		echo "$(name) added to MODULES"; \
 		echo "Creating Dockerfile for $(name)"; \
-		echo 'FROM golang:alpine\nWORKDIR /app\nCOPY . .\nRUN go build -o /$(name)\nCMD ["/$(name)"]' > Dockerfile; \
+		echo 'FROM golang:alpine\nWORKDIR /app\nCOPY . .\nRUN go build -o /$(name)\nEXPOSE 8080\nCMD ["/$(name)"]' > Dockerfile; \
 		echo "Creating main.go for $(name)"; \
-		echo 'package main\n\nimport "fmt"\n\nfunc main() {\n\tfmt.Println("Hello, world!")\n}' > main.go; \
+		echo 'package main\n\nimport (\n\t"fmt"\n\t"log"\n\t"net/http"\n)\n\nfunc main() {\n\tfmt.Println("Hello, world!")\n}' > main.go; \
 		echo "Creating a base model"; \
 		echo 'package main\n\nimport "gorm.io/gorm"\n\ntype $(name) struct (\n\tgorm.model\n)' > models.go; \
+		echo "creating handler.go"; \
+		echo 'package main\n\nimport (\n\t"encoding/json"\n\t"net/http"\n\t"text/template"\n)\n\ntype $(name)Request struct {\n\tproperty string `json:property`\n}\n\nfunc $(name)Handler(w http.ResponseWriter, r *http.Request) {\n\tvar req $(name)Request\n\tif err := json.NewDecoder(r.Body).Decode(&req); err != nil {\n\t\treturn\n\t}\n\t //Do something wit h the data in req\n\ttmpl := template.Must(template.ParseFiles("templates/$(name)_index.html"))\n\ttmpl.Execute(w, nil)\n}' > handler.go; \
+		echo "creating router.go"; \
+		echo 'package main\n\nimport (\n\t"github.com/gorilla/mux"\n\t"net/http"\n)\n\nfunc $(name)Router() *mux.Router {\n\trouter := mux.NewRouter()\n\trouter.HandleFunc("/$(name)", $(name)Handler).Methods("POST")\n\treturn router\n}' > router.go; \
+		echo "creating middleware.go"; \
+		echo "" > middleware.go; \
 		echo "Creating $(name)_test.go for $(name)"; \
 		echo 'package main\n\nimport "testing"\n\nfunc TestMain(t *testing.T) {\n\texpected := "Hello, world!"\n\tactual := "Hello, world!"\n\tif actual != expected {\n\t\tt.Errorf("expected %v, got %v", expected, actual)\n\t}\n}' > $(name)_test.go; \
 		go get github.com/stretchr/testify; \
 		echo "creating folder for html templates"; \
 		mkdir templates; \
+		touch templates/$(name)_index.html; \
 		echo "Adding service to docker compose"; \
 		cd ..; \
 		$(eval LEN := $(shell printf '%s' '$(subst ','"'"',$(MODULES))' | wc -c))\
