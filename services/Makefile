@@ -159,16 +159,28 @@ create-service:
 		echo "Creating new service $(name)"; \
 		mkdir -p $(name); \
 		cd $(name) && go mod init $(name); \
+		go get -u gorm.io/gorm; \
 		echo "Adding $(name) to MODULES"; \
 		sed -i.bak '/^MODULES := / s/$$/ $(name)/' $(MAKEFILE_LIST); \
 		echo "$(name) added to MODULES"; \
 		echo "Creating Dockerfile for $(name)"; \
-		echo 'FROM golang:alpine\nWORKDIR /app\nCOPY . .\nRUN go build -o /$(name)\nCMD ["/$(name)"]' > $(name)/Dockerfile; \
+		echo 'FROM golang:alpine\nWORKDIR /app\nCOPY . .\nRUN go build -o /$(name)\nCMD ["/$(name)"]' > Dockerfile; \
 		echo "Creating main.go for $(name)"; \
-		echo 'package main\n\nimport "fmt"\n\nfunc main() {\n\tfmt.Println("Hello, world!")\n}' > $(name)/main.go; \
+		echo 'package main\n\nimport "fmt"\n\nfunc main() {\n\tfmt.Println("Hello, world!")\n}' > main.go; \
+		echo "Creating a base model"; \
+		echo 'package main\n\nimport "gorm.io/gorm"\n\ntype $(name) struct (\n\tgorm.model\n)' > models.go; \
 		echo "Creating $(name)_test.go for $(name)"; \
-		echo 'package main\n\nimport "testing"\n\nfunc TestMain(t *testing.T) {\n\texpected := "Hello, world!"\n\tactual := "Hello, world!"\n\tif actual != expected {\n\t\tt.Errorf("expected %v, got %v", expected, actual)\n\t}\n}' > $(name)/$(name)_test.go; \
+		echo 'package main\n\nimport "testing"\n\nfunc TestMain(t *testing.T) {\n\texpected := "Hello, world!"\n\tactual := "Hello, world!"\n\tif actual != expected {\n\t\tt.Errorf("expected %v, got %v", expected, actual)\n\t}\n}' > $(name)_test.go; \
 		go get github.com/stretchr/testify; \
+		echo "creating folder for html templates"; \
+		mkdir templates; \
+		echo "Adding service to docker compose"; \
+		cd ..; \
+		$(eval LEN := $(shell printf '%s' '$(subst ','"'"',$(MODULES))' | wc -c))\
+		echo "  $$name:" >> $(COMPOSE_FILE); \
+		echo "    build: ./services/$$name" >> $(COMPOSE_FILE); \
+		echo "    ports:" >> $(COMPOSE_FILE); \
+		echo "      - '808$(LEN):8080'" >> $(COMPOSE_FILE); \
 	fi
 
 
