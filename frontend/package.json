@@ -310,6 +310,7 @@
     "format": "prettier --write 'js/**/*.js'",
     "lint:fix": "eslint --fix 'js/**/*.js'",
     "build-docker": "docker build .",
+    "create-component": "./npm-scripts/create-component.sh",
     "start": "echo 'Running docker development httpd server. Visit http://localhost:89/' && docker run -d -p 89:80 --mount src=$(pwd),target=/usr/local/apache2/htdocs/,type=bind --name webapp httpd  && docker logs --follow webapp"
   },
   "keywords": [],
