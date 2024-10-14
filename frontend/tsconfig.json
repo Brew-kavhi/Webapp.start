@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ESNext", // or ES6, depending on your needs
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "strict": true,
+    "esModuleInterop": true
+  },
+  "include": ["./**/*.ts"],
+  "exclude": ["node_modules"]
+}
+
