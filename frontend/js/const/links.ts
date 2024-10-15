@@ -2,13 +2,15 @@ export const navLinks: Link[] = [
 	{
 		name: 'Home',
 		href: '/',
-		component: '/components/coffee/CoffeeCard.js',
+		component: 'CoffeeCard',
+		module: 'coffee',
 		tagName: 'coffee-card',
 	},
 	{
 		name: 'About',
 		href: '/about',
-		component: '/components/coffee/CoffeeDetails.js',
+		component: 'CoffeeDetails',
+		module: "coffee",
 		tagName: 'coffee-details',
 	},
 ]; // Default links if none are provided.
