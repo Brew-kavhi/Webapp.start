@@ -12,12 +12,14 @@
 import { navLinks } from '/js/const/links.js';
 
 class Header extends HTMLElement {
+	private links: Link[];
+
 	constructor() {
 		super();
 		this.attachShadow({ mode: 'open' });
 		this.links = navLinks;
 	}
-	set navigationLinks(links) {
+	set navigationLinks(links: Link[]) {
 		this.links = links;
 		this.render();
 	}
@@ -32,17 +34,17 @@ class Header extends HTMLElement {
     `
 			)
 			.join('');
-		this.shadowRoot.innerHTML = `
+		this.shadowRoot!.innerHTML = `
 <link rel="stylesheet" href="components/navigation/header/header.css" />
 <nav>${navItems}</nav>
 `;
 		this.setupNavigation();
 	}
 	setupNavigation() {
-		this.shadowRoot.querySelectorAll('a[data-link]').forEach((link) => {
+		this.shadowRoot!.querySelectorAll('a[data-link]').forEach((link) => {
 			link.addEventListener('click', (event) => {
 				event.preventDefault();
-				const url = link.getAttribute('href');
+				const url = link.getAttribute('href') || '';
 				history.pushState(null, null, url);
 				this.loadContent(url);
 				this.updateActiveLink(url);
@@ -55,19 +57,22 @@ class Header extends HTMLElement {
 		this.loadContent(window.location.pathname);
 		this.updateActiveLink(window.location.pathname);
 	}
-	async loadContent(url) {
+	async loadContent(url: string) {
 		const contentElement = document.getElementById('content-body');
+		if (!contentElement) {
+			return;
+		}
 		contentElement.innerHTML = '';
-		var link = this.links.filter((i) => {
+		var link = this.links.filter((i: Link) => {
 			return i.href === url;
 		});
 		if (link.length > 0) {
-			await import(link[0].component);
+			await import(`../../${link[0].module}/${link[0].component}.js`);
 			contentElement.appendChild(document.createElement(link[0].tagName));
 		}
 	}
-	updateActiveLink(url) {
-		this.shadowRoot.querySelectorAll('a[data-link]').forEach((link) => {
+	updateActiveLink(url: string) {
+		this.shadowRoot?.querySelectorAll('a[data-link]').forEach((link) => {
 			link.classList.toggle('active', link.getAttribute('href') === url);
 		});
 	}
