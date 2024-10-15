@@ -45,10 +45,13 @@ componentContent=$(cat <<EOF
  * License: MIT
  * Copyright 
  */
-class $componentName extends HTMLElement {
+import { TemplatedComponent } from '/components/utils/TemplatedComponent.js';
+
+class $componentName extends TemplatedComponent {
 	constructor() {
 		super();
 		this.attachShadow({ mode: 'open' });
+		$componentName.templateFile = '$directoryPath/$componentName-template.html';
 	}
 
 	connectedCallback() {
@@ -65,6 +68,7 @@ EOF
 
 # Write the component file
 echo "$componentContent" > "$directoryPath/$componentName.js"
+echo "<div></div>" > "$directoryPath/$componentName-template.html"
 
 echo "Component $folderName created successfully in $directoryPath"
 
