@@ -1,3 +1,4 @@
+include ../.env
 # Define the command for golangci-lint and goimports
 MODULES :=
 GOLANGCI_LINT = $(shell which golangci-lint)
@@ -164,6 +165,28 @@ run:
 	fi
 	@echo "Running $(module)"
 	@cd $(module) && go run main.go
+
+.PHONY: run-kong
+run-kong:
+	echo "creating the docker network"; \
+	docker network create kong-net; \
+	docker pull kong@latest; \
+	echo "checking for the kong configuration"
+	@if ! [ -f "kong.yml" ]; then \
+		echo "file does not exist, creating one.";\
+		cd ../frontend && npm run generate-openapi; \
+	fi;
+	docker run -d --name kong-dbless --network=kong-net -v "$(pwd):/kong/declarative/" \
+	-e "KONG_DATABASE=off" \
+	-e "KONG_DECLARATIVE_CONFIG=/kong/declarative/kong.yml" \
+	-e "KONG_PROXY_ACCESS_LOG=/dev/stdout" \
+	-e "KONG_ADMIN_ACCESS_LOG=/dev/stdout" \
+	-e "KONG_PROXY_ERROR_LOG=/dev/stderr" \
+	-e "KONG_ADMIN_ERROR_LOG=/dev/stderr" \
+	-e "KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl" \
+	-e "KONG_ADMIN_GUI_URL=http://localhost:8002" \
+	-p ${KONG_PORT}:8000 -p 8443:8443 -p 127.0.0.1:${KONG_PORT}:8001 -p 127.0.0.1:8444:8444 kong
+	
 
 .PHONY: create-service
 create-service:
