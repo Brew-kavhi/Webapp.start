@@ -7,6 +7,8 @@ COMPOSE_FILE = ../docker-compose.yml
 FRONTEND_DIR = frontend
 SERVICES_DIR = .
 
+OPENAPI_GENERATOR_VERSION := $(shell openapi-generator-cli --version 2>/dev/null)
+
 # Ensure that golangci-lint is installed
 .PHONY: check-golangci-lint
 check-golangci-lint:
@@ -58,6 +60,22 @@ format-module:
 	fi
 	@echo "Formatting $(module)"
 	@cd $(module) && goimports -w .
+
+.PHONY: generate-stubs
+generate-stubs:
+	@command -v openapi-generator-cli >/dev/null 2>&1 || { echo "Openapi-generator not found, consider installing it using npm install @openapitools/openapi-generator-cli -g"; exit 1; }
+	@echo "Openapi-generator found"
+	@if [ -z "$(module)" ]; then \
+		echo "Usage: make generate-stubs module=<module_name>"; \
+		exit 1; \
+	fi
+	@echo "generating stubs for module $(module)"
+	@cd $(module) && openapi-generator-cli generate -i api_scheme.yaml -g go-server -o .;\
+	go mod tidy; \
+	echo "adding the databae connection to main.go"; \
+
+
+	
 
 .PHONY: generate-compose
 generate-compose:
@@ -145,23 +163,26 @@ run:
 		exit 1; \
 	fi
 	@echo "Running $(module)"
-	@cd $(module) && go run .
+	@cd $(module) && go run main.go
 
 .PHONY: create-service
 create-service:
-	@if [ -z "$(name)" ]; then \
-		echo "Usage: make create-service name=<service_name>"; \
-		exit 1; \
+	@if [ -z "$(name)" ]; then\
+		echo "Usage: make create-service name=<service_name>";\
+		exit 1;\
 	fi
-	@if echo $(MODULES) | grep -w $(name) > /dev/null; then \
-		echo "$(name) is already in MODULES"; \
-	else \
+	$(eval CAPITALIZED_NAME=$(shell echo $(name) | sed 's/.*/\u&/'))
+	@if echo "$(MODULES)" | grep -w "$(name)" > /dev/null; then \
+		echo "$(name) is already in MODULES";\
+	else  \
 		echo "Creating new service $(name)"; \
 		mkdir -p $(name); \
-		echo "Initializing go module"; \	
+		echo "Initializing go module"; \
 		cd $(name) && go mod init $(name); \
 		echo "Installing GORM (GO object relation manager)"; \
 		go get -u gorm.io/gorm; \
+		echo "Installing OpenAPI-codegen"; \
+		go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest; \
 		echo "Installing Kafka for event messaging"; \
 		go get github.com/segmentio/kafka-go; \
 		echo "Installing mux for routing"; \
@@ -169,24 +190,11 @@ create-service:
 		echo "Adding $(name) to MODULES"; \
 		sed -i.bak '/^MODULES := / s/$$/ $(name)/' $(MAKEFILE_LIST); \
 		echo "$(name) added to MODULES"; \
-		echo "Creating Dockerfile for $(name)"; \
-		echo 'FROM golang:alpine\nWORKDIR /app\nCOPY . .\nRUN go build -o /$(name)\nEXPOSE 8080\nCMD ["/$(name)"]' > Dockerfile; \
-		echo "Creating main.go for $(name)"; \
-		echo 'package main\n\nimport (\n\t"fmt"\n\t"log"\n\t"net/http"\n)\n\nfunc main() {\n\tfmt.Println("Hello, world!")\n}' > main.go; \
-		echo "Creating a base model"; \
-		echo 'package main\n\nimport "gorm.io/gorm"\n\ntype $(name) struct (\n\tgorm.model\n)' > models.go; \
-		echo "creating handler.go"; \
-		echo 'package main\n\nimport (\n\t"encoding/json"\n\t"net/http"\n\t"text/template"\n)\n\ntype $(name)Request struct {\n\tproperty string `json:property`\n}\n\nfunc $(name)Handler(w http.ResponseWriter, r *http.Request) {\n\tvar req $(name)Request\n\tif err := json.NewDecoder(r.Body).Decode(&req); err != nil {\n\t\treturn\n\t}\n\t //Do something wit h the data in req\n\ttmpl := template.Must(template.ParseFiles("templates/$(name)_index.html"))\n\ttmpl.Execute(w, nil)\n}' > handler.go; \
-		echo "creating router.go"; \
-		echo 'package main\n\nimport (\n\t"github.com/gorilla/mux"\n\t"net/http"\n)\n\nfunc $(name)Router() *mux.Router {\n\trouter := mux.NewRouter()\n\trouter.HandleFunc("/$(name)", $(name)Handler).Methods("POST")\n\treturn router\n}' > router.go; \
-		echo "creating middleware.go"; \
-		echo "" > middleware.go; \
+		echo "Creating a base openapi scheme"; \
+		echo "openapi: 3.0.0\ninfo:\n title: API for service '$(name)'\n description: This is the api scheme for service '$(name)', where all models and endpoints for this service are defined\n version: 0.0.1\n\nservers:\n - url: http://localhost:8080\n   description: Local development server\n\npaths:\n /$(name):\n  get:\n   summary: Get all instances of $(name)\n   operationId: list$(CAPITALIZED_NAME)\n   responses:\n    '200':\n     description: A list of instances of $(name)\n     content:\n      application/json:\n       schema:\n        type: array\n        items:\n         \044ref: '#/components/schemas/$(CAPITALIZED_NAME)'\n  post:\n   summary: Create a new instance of $(name)\n   operationId: create$(CAPITALIZED_NAME)\n   requestBody:\n    content:\n     application/json:\n       schema:\n        \044ref: '#/components/schemas/New$(CAPITALIZED_NAME)'\n   responses:\n    '201':\n     description: Instance of $(name) created\n     content:\n      application/json:\n       schema:\n        \044ref: '#/components/schemas/$(CAPITALIZED_NAME)'\ncomponents:\n schemas:\n  $(CAPITALIZED_NAME):\n   type: object\n   properties:\n    id:\n     type: integer\n     format: int64\n    hr_id:\n     type: string\n  New$(CAPITALIZED_NAME):\n   type: object\n   properties:\n    id:\n     type: integer\n     format: int64\n    hr_id:\n     type: string" > api_scheme.yaml; \
 		echo "Creating $(name)_test.go for $(name)"; \
 		echo 'package main\n\nimport "testing"\n\nfunc TestMain(t *testing.T) {\n\texpected := "Hello, world!"\n\tactual := "Hello, world!"\n\tif actual != expected {\n\t\tt.Errorf("expected %v, got %v", expected, actual)\n\t}\n}' > $(name)_test.go; \
 		go get github.com/stretchr/testify; \
-		echo "creating folder for html templates"; \
-		mkdir templates; \
-		touch templates/$(name)_index.html; \
 		echo "Adding service to docker compose"; \
 		cd ..; \
 		$(eval LEN := $(shell printf '%s' '$(subst ','"'"',$(MODULES))' | wc -c))\
@@ -194,6 +202,7 @@ create-service:
 		echo "    build: ./services/$$name" >> $(COMPOSE_FILE); \
 		echo "    ports:" >> $(COMPOSE_FILE); \
 		echo "      - '808$(LEN):8080'" >> $(COMPOSE_FILE); \
+		echo "Next step: edit the api_scheme to your desire and then autogenerate the boiler plate code by running make generate-stubs module=$$name"; \
 	fi
 
 

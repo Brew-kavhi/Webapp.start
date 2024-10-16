@@ -9,6 +9,9 @@ This repo comes with a basic eslinter configuration and prettier configuration a
 This project is a monorepo for the backend and the frontend. Backend is written in go and frontend is written in htmx with webcomponents. This repository depends on go, make and node, so before continuing make sure these are installed on your system. 
 To get started after cloning this repo, install all necessary frontend depenencies on your system with npm -i in the frontend folder. 
 
+### Dependencies
+For auto generating the go models we rely on openapi-generator. This can globally be installed with ``npm install @openapitools/openapi-generator-cli -g``. See [here](https://openapi-generator.tech/) for more details.
+
 ## Add your files
 
 This repository of course follows some rules, like never pushing un formatted code and commit conventions. These conventions are all listed belows and the important ones are enforced through pipelines.
