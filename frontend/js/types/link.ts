@@ -4,4 +4,4 @@ type Link = {
 	component: string;
 	tagName: string;
 	module: string;
-}
+};

@@ -10,7 +10,7 @@ export const navLinks: Link[] = [
 		name: 'About',
 		href: '/about',
 		component: 'CoffeeDetails',
-		module: "coffee",
+		module: 'coffee',
 		tagName: 'coffee-details',
 	},
 ]; // Default links if none are provided.
