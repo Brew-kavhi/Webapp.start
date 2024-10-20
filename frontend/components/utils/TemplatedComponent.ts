@@ -16,8 +16,9 @@ export class TemplatedComponent extends HTMLElement {
 			getValueByPath(this, g)
 		);
 	}
-
 }
 function getValueByPath(obj: any, path: string): any {
-	return path.split('.').reduce((accumulator, part) => accumulator && accumulator[part], obj);
+	return path
+		.split('.')
+		.reduce((accumulator, part) => accumulator && accumulator[part], obj);
 }
