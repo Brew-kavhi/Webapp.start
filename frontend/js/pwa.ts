@@ -202,11 +202,12 @@ export async function authenticateUserBiometricCredentials(
 		const authResponse = await fetch(`${loginUrl}?username=${username}`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(credentialJSON)
+			body: JSON.stringify(credentialJSON),
 		});
 
 		const authResult = await authResponse.json();
 		console.log(authResult);
+		return authResult;
 	} catch (err) {
 		console.error('Authentication failed:', err);
 	}
