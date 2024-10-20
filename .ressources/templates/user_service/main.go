@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -13,7 +14,7 @@ import (
 )
 
 var webAuthn *webauthn.WebAuthn
-var signingKey = []byte("secret") // Replace with a secure key
+var signingKey = []byte(os.Getenv("JWT_SECRET")) // Replace with a secure key
 var userStore = map[string]*User{}
 var sessionDataStore = map[string]*webauthn.SessionData{} // Store session data temporarily
 var db *gorm.DB

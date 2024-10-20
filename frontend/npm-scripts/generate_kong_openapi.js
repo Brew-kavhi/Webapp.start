@@ -16,7 +16,16 @@ let mergedOpenApi = {
 // Kong config structure
 let kongConfig = {
     _format_version: '2.1',
-    services: []
+    services: [],
+    consumers:[
+        {
+            username: "Frontend",
+            jwt_secrets: [{
+                key: "frontend_jwt_token_key",
+                secret: process.env.JWT_SECRET
+            }]
+       }]
+
 };
 
 // Function to merge components

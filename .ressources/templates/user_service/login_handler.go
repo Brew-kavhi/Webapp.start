@@ -78,6 +78,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 	// Create JWT token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"iss": "frontend_jwt_token_key",
 		"sub":  user.ID,
 		"name": user.Name,
 		"exp":  time.Now().Add(time.Hour * 1).Unix(),
@@ -88,7 +89,15 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("login successful")
-	fmt.Printf("%v", token)
-	writeJSON(w, map[string]string{"token": tokenString})
+	//set  the token in a cookie to prevent XSS attacks on client
+	http.SetCookie(w, &http.Cookie{
+	    Name:     "jwt",
+	    Value:    tokenString,
+	    HttpOnly: true,  // Prevent access from JavaScript
+	    Secure:   true,  // Only send over HTTPS
+	    Path:     "/",   // Available to the entire site
+	    SameSite: http.SameSiteStrictMode,  // CSRF protection
+	})
+
+	writeJSON(w, map[string]string{"status": "success"})
 }

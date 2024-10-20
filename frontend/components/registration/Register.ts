@@ -32,7 +32,7 @@ class Register extends TemplatedComponent {
 		this.shadowRoot.addEventListener('click', this);
 	}
 
-	handleEvent(e) {
+	async handleEvent(e) {
 		if (e.target.id == 'registerButton') {
 			const username = this.shadowRoot.getElementById('username').value;
 			registerUserBiometricCredentials(
@@ -42,11 +42,12 @@ class Register extends TemplatedComponent {
 			);
 		} else if (e.target.id == 'loginButton') {
 			const username = this.shadowRoot.getElementById('username').value;
-			authenticateUserBiometricCredentials(
+			const response = await authenticateUserBiometricCredentials(
 				`${USER_API_HOST}/auth/login/challenge`,
 				`${USER_API_HOST}/auth/login`,
 				username
 			);
+			alert(response['status']);
 		}
 	}
 }
