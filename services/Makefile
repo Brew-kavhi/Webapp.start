@@ -7,6 +7,7 @@ GOIMPORTS = $(shell which goimports)
 COMPOSE_FILE = ../docker-compose.yml
 FRONTEND_DIR = frontend
 SERVICES_DIR = .
+makeFileDir := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
 OPENAPI_GENERATOR_VERSION := $(shell openapi-generator-cli --version 2>/dev/null)
 
@@ -172,11 +173,13 @@ run-kong:
 	docker network create kong-net; \
 	docker pull kong@latest; \
 	echo "checking for the kong configuration"
-	@if ! [ -f "kong.yml" ]; then \
+	@if ! [ -f "kong.yaml" ]; then \
 		echo "file does not exist, creating one.";\
 		cd ../frontend && npm run generate-openapi; \
 	fi;
-	docker run -d --name kong-dbless --network=kong-net -v "$(pwd):/kong/declarative/" \
+	docker run -it --name kong-dbless --network=kong-net \
+		--mount type=bind,source=${makeFileDir}services/kong.yaml,target=/kong/declarative/kong.yml \
+	--security-opt apparmor=unconfined \
 	-e "KONG_DATABASE=off" \
 	-e "KONG_DECLARATIVE_CONFIG=/kong/declarative/kong.yml" \
 	-e "KONG_PROXY_ACCESS_LOG=/dev/stdout" \
@@ -185,7 +188,7 @@ run-kong:
 	-e "KONG_ADMIN_ERROR_LOG=/dev/stderr" \
 	-e "KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl" \
 	-e "KONG_ADMIN_GUI_URL=http://localhost:8002" \
-	-p ${KONG_PORT}:8000 -p 8443:8443 -p 127.0.0.1:${KONG_PORT}:8001 -p 127.0.0.1:8444:8444 kong
+	-p ${KONG_PORT}:8000 kong
 	
 
 .PHONY: create-service

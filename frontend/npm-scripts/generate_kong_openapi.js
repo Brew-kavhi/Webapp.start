@@ -60,7 +60,9 @@ const processOpenApiFile = (filePath) => {
         }
         service.routes.push({
             name: `${serviceName}-${operationId}`,
-            paths: [path]
+            paths: [`/api/${serviceName}${path}`],
+            strip_path:true,
+            plugins: [{name:'jwt'}]
         });
 
         // Merge the paths into the merged OpenAPI spec
@@ -91,6 +93,28 @@ const openApiFiles = getAPISchemes('../services');
 
 // Process each OpenAPI file
 openApiFiles.forEach(processOpenApiFile);
+kongConfig.services.push({
+    name: 'user-api',
+    url: 'http://localhost:10001',
+    routes: [
+        {
+            name: 'user-route',
+            paths: ['/api/user'],
+            strip_path: true
+        }
+    ]
+});
+kongConfig.services.push({
+    name: 'frontend',
+    url: 'http://localhost:5173',
+    routes: [
+        {
+            name: 'frontend-route',
+            paths: ['/'],
+            strip_path: false
+        }
+    ],
+});
 
 // Write the kong.yaml file
 fs.writeFileSync('../services/kong.yaml', yaml.dump(kongConfig), 'utf8');
