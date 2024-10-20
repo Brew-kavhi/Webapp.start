@@ -191,6 +191,22 @@ run-kong:
 	-p ${KONG_PORT}:8000 kong
 	
 
+.PHONY: user-service
+user-service:
+	echo "Creating a user service"; \
+	mkdir -p user; \
+	cp -a ../.ressources/templates/user_service/* user;\
+	echo "Initializing go module"; \
+	cd user && go mod init user; \
+	echo "Installing GORM (GO object relation manager)"; \
+	go get -u gorm.io/gorm; \
+	go get -u github.com/rs/cors; \
+	go get -u gorm.io/driver/sqlite; \
+	go get -u github.com/go-webauthn/webauthn; \
+	go get -u github.com/golang-jwt/jwt; \
+	go mod tidy; \
+	
+
 .PHONY: create-service
 create-service:
 	@if [ -z "$(name)" ]; then\

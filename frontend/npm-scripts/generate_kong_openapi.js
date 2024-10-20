@@ -31,7 +31,7 @@ const mergeComponents = (target, source) => {
 };
 
 const getAPISchemes = (folder) => {
-    return fs.readdirSync(folder, {withFileTypes: true}).filter(dirent =>dirent.isDirectory()).map(dirent => `${folder}/${dirent.name}/api_scheme.yaml`);
+    return fs.readdirSync(folder, {withFileTypes: true}).filter(dirent =>dirent.isDirectory()).filter(dirent => dirent.name !== 'user').map(dirent => `${folder}/${dirent.name}/api_scheme.yaml`);
 };
 
 // Function to process and merge OpenAPI specs
