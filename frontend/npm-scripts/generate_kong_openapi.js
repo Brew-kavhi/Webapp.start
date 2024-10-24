@@ -97,14 +97,14 @@ let kongPort = 8000;
 if (process.env.KONG_PORT) {
     kongPort = process.env.KONG_PORT;
 }
-mergedOpenApi.servers.push({url: `http://localhost:${kongPort}`});
+mergedOpenApi.servers.push({url: `${process.env.KONG_HOST}:${kongPort}`});
 const openApiFiles = getAPISchemes('../services');
 
 // Process each OpenAPI file
 openApiFiles.forEach(processOpenApiFile);
 kongConfig.services.push({
     name: 'user-api',
-    url: 'http://localhost:10001',
+    url: `${process.env.SERVICES_HOST}:10001`,
     routes: [
         {
             name: 'user-route',
@@ -115,7 +115,7 @@ kongConfig.services.push({
 });
 kongConfig.services.push({
     name: 'frontend',
-    url: 'http://localhost:5173',
+    url: `${process.env.FRONTEND_HOST}:${process.env.FRONTEND_PORT}`,
     routes: [
         {
             name: 'frontend-route',
@@ -129,7 +129,7 @@ kongConfig.services.push({
 fs.writeFileSync('../services/kong.yaml', yaml.dump(kongConfig), 'utf8');
 
 // Write the merged OpenAPI spec
-fs.writeFileSync('api/merged-openapi.yaml', yaml.dump(mergedOpenApi), 'utf8');
+fs.writeFileSync('client_api/merged-openapi.yaml', yaml.dump(mergedOpenApi), 'utf8');
 
 console.log('kong.yaml and merged-openapi.yaml files generated successfully.');
 
