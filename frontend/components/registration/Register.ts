@@ -9,17 +9,55 @@
  * License: MIT
  * Copyright Marius Goehring
  */
-import { TemplatedComponent } from '/components/utils/TemplatedComponent.ts';
-import {
-	registerUserBiometricCredentials,
-	authenticateUserBiometricCredentials,
-} from '/js/pwa.ts';
-import { USER_API_HOST } from '/js/const/host.ts';
+import { User } from '/client_api/userModel';
+import { Configuration } from '/client_api';
+import { UserAPI } from '/client_api/userModel';
+import { FieldScheme, InputType } from '/js/types/FieldScheme';
+import '/components/utils/FormComponent.ts';
+import { TemplatedComponent } from '/components/utils/TemplatedComponent';
+import { USER_API_HOST } from '/js/const/host';
 
 class Register extends TemplatedComponent {
+	private configuration: Configuration;
+	private userAPI: UserAPI;
+	private form: FormComponent;
+	private fields: Array<FieldScheme>;
+
 	constructor() {
 		super();
-		this.attachShadow({ mode: 'open' });
+		this.configuration = new Configuration({
+			basePath: USER_API_HOST,
+			baseOptions: {
+				withCredentials: true,
+			},
+		});
+		this.userAPI = new UserAPI(this.configuration);
+		this.fields = [
+			{
+				name: 'name',
+				label: 'Name',
+				type: InputType.Text,
+				required: true,
+			},
+			{
+				name: 'lastName',
+				label: 'Last name',
+				type: InputType.Text,
+				required: true,
+			},
+			{
+				name: 'email',
+				label: 'E-Mail',
+				type: InputType.Email,
+				required: true,
+			},
+			{
+				name: 'password',
+				label: 'Password',
+				type: InputType.PassworConfirmation,
+				required: true,
+			},
+		];
 		Register.templateFile = '/components/registration/register.html';
 	}
 
@@ -28,26 +66,38 @@ class Register extends TemplatedComponent {
 	}
 
 	render() {
-		this.shadowRoot.innerHTML = this.prepareHTML(Register);
-		this.shadowRoot.addEventListener('click', this);
+		this.shadowRoot!.innerHTML = this.prepareHTML(Register);
+		this.form = document.createElement('form-component');
+		this.form.setFields(this.fields);
+		this.shadowRoot.appendChild(this.form);
+		let template = this.shadowRoot?.getElementById('register-form-template');
+		this.form.setHTML(template.innerHTML);
+		this.form.setDataScheme(User);
+		this.shadowRoot.addEventListener('form-submitted', this);
+	}
+
+	validatePassword(value: string): [boolean, string] {
+		return [true, 'Alles gut'];
 	}
 
 	async handleEvent(e) {
-		if (e.target.id == 'registerButton') {
-			const username = this.shadowRoot.getElementById('username').value;
-			registerUserBiometricCredentials(
-				`${USER_API_HOST}/auth/register/challenge`,
-				`${USER_API_HOST}/auth/register`,
-				username
-			);
-		} else if (e.target.id == 'loginButton') {
-			const username = this.shadowRoot.getElementById('username').value;
-			const response = await authenticateUserBiometricCredentials(
-				`${USER_API_HOST}/auth/login/challenge`,
-				`${USER_API_HOST}/auth/login`,
-				username
-			);
-			alert(response['status']);
+		if (e.type == 'form-submitted') {
+			e.preventDefault();
+			var user = e.detail;
+			this.userAPI
+				.createUser(user)
+				.then((response) => {
+					if (response.status == 201) {
+						alert('user successfully registered');
+						window.location.href = '/';
+					}
+				})
+				.catch((error) => {
+					if (error.status == 404) {
+						alert('user with this email alreadyexists');
+					}
+					console.log(error);
+				});
 		}
 	}
 }
