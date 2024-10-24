@@ -1,37 +1,21 @@
 package main
 
 import (
+	"encoding/json"
 	"net/http"
-	"time"
 	"fmt"
-	"github.com/golang-jwt/jwt"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
 )
 
 // Login endpoint
-func loginChallenge(w http.ResponseWriter, r *http.Request) {
+func (userDB *UserDB) loginChallenge(w http.ResponseWriter, r *http.Request) {
 	username := r.URL.Query().Get("username")
 	
 	// Check if the user already exists in the database
-	var user User
-	db, err := gorm.Open(sqlite.Open("user.db"), &gorm.Config{})
+	user, err := userDB.GetUser(username)
 	if err != nil {
-		panic("failed to connect database")
-	}
-	
-	if err := db.Where("name = ?", username).First(&user).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-		    // User does not exist, so create a new one
-			fmt.Printf("%v", err)
-			http.Error(w, "Error cannot register user here", http.StatusInternalServerError)
-		} else {
-			fmt.Printf("%v", err)
-		    http.Error(w, "Database error", http.StatusInternalServerError)
-		    return
-		}
-	} else {
-		fmt.Println("User already exists")
+		fmt.Println("Try login challenge for user " + username)
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
 	}
 	
 	options, sessionData, err := webAuthn.BeginLogin(user)
@@ -46,22 +30,16 @@ func loginChallenge(w http.ResponseWriter, r *http.Request) {
 }
 
 // Login verification endpoint
-func login(w http.ResponseWriter, r *http.Request) {
+func (userDB *UserDB) login(w http.ResponseWriter, r *http.Request) {
 	username := r.URL.Query().Get("username")
 
-	db, err := gorm.Open(sqlite.Open("user.db"), &gorm.Config{})
-	if err != nil {
-		panic("failed to connect database")
-	}
-    
 	// Retrieve the user from the database
-	var user User
-	if err := db.Where("name = ?", username).First(&user).Error; err != nil {
-		http.Error(w, "User not found", http.StatusNotFound)
+	user, err := userDB.GetUser(username)
+	if err != nil {
+		fmt.Println("try login challenge for user " + username)
+		http.Error(w, "user not found", http.StatusNotFound)
 		return
 	}
-	fmt.Println("Fuiond user")
-	fmt.Printf("%v", user)
 	
 	// Retrieve session data for this user
 	sessionData, exists := sessionDataStore[username]
@@ -76,28 +54,61 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Create JWT token
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"iss": "frontend_jwt_token_key",
-		"sub":  user.ID,
-		"name": user.Name,
-		"exp":  time.Now().Add(time.Hour * 1).Unix(),
-	})
-	tokenString, err := token.SignedString(signingKey)
+	tokenString, err := GenerateJWT(*user)
 	if err != nil {
 		http.Error(w, "Error creating token", http.StatusInternalServerError)
 		return
 	}
 
 	//set  the token in a cookie to prevent XSS attacks on client
-	http.SetCookie(w, &http.Cookie{
-	    Name:     "jwt",
-	    Value:    tokenString,
-	    HttpOnly: true,  // Prevent access from JavaScript
-	    Secure:   true,  // Only send over HTTPS
-	    Path:     "/",   // Available to the entire site
-	    SameSite: http.SameSiteStrictMode,  // CSRF protection
-	})
+	setJWTCookie(w, tokenString)
 
 	writeJSON(w, map[string]string{"status": "success"})
+}
+
+// LoginUser authenticates the user with a password and returns a JWT token.
+func (userDB *UserDB) loginPassword(w http.ResponseWriter, r *http.Request) {
+	var creds PasswordCredentials
+	err := json.NewDecoder(r.Body).Decode(&creds)
+	if err != nil {
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		return
+	}
+
+	// Retrieve the user from the database
+	user, err := userDB.GetUser(creds.Username)
+	if err != nil {
+		fmt.Println("User does not exist")
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+
+	// Compare the password with the stored hash
+	err = CheckPassword(user.PasswordHash, creds.Password)
+	if err != nil {
+		http.Error(w, "Invalid password", http.StatusUnauthorized)
+		return
+	}
+
+	// Generate a JWT token for the user
+	token, err := GenerateJWT(*user)
+	if err != nil {
+		http.Error(w, "Error generating token", http.StatusInternalServerError)
+		return
+	}
+
+	// Return the token in the response
+	setJWTCookie(w, token)
+
+	writeJSON(w, map[string]string{"status": "success"})
+}
+
+func logout(w http.ResponseWriter, r *http.Request) {
+	// Clear the JWT cookie by setting it to an expired state
+	unsetJWTCookie(w)
+
+    // Optionally, if you're maintaining server-side sessions, invalidate the session here
+
+    w.WriteHeader(http.StatusOK)
+
 }
