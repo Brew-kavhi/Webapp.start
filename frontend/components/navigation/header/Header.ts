@@ -9,72 +9,64 @@
  * License: MIT
  * Copyright Marius Goehring
  */
-import { navLinks } from '/js/const/links.js';
+import { routes } from '/js/const/routes.js';
+import { TemplatedComponent } from '/components/utils/TemplatedComponent';
 
-class Header extends HTMLElement {
-	private links: Link[];
+class Header extends TemplatedComponent {
+	private routes: Route[];
+	private navItems;
 
 	constructor() {
 		super();
-		this.attachShadow({ mode: 'open' });
-		this.links = navLinks;
-	}
-	set navigationLinks(links: Link[]) {
-		this.links = links;
-		this.render();
-	}
-	connectedCallback() {
-		this.render();
-	}
-	async render() {
-		const navItems = this.links
-			.map(
-				(link) => `
-      <a href="${link.href}" data-link>${link.name}</a>
-    `
-			)
+		this.routes = routes;
+		this.navItems = this.routes
+			.map((link) => {
+				if (!link.hide) {
+					return `
+      <a href="${link.path}" data-link>${link.name}</a>
+    `;
+				}
+				return '';
+			})
 			.join('');
-		this.shadowRoot!.innerHTML = `
-<link rel="stylesheet" href="components/navigation/header/header.css" />
-<nav>${navItems}</nav>
-`;
+		Header.templateFile = '/components/navigation/header/header.html';
+	}
+	set navigationLinks(routes: Route[]) {
+		this.routes = routes;
+		this.render();
+	}
+
+	connectedCallback() {
+		this.loadTemplate(Header).then(() => this.render());
+	}
+
+	render() {
+		this.shadowRoot.innerHTML = this.prepareHTML(Header);
 		this.setupNavigation();
+		this.addIcons();
 	}
 	setupNavigation() {
-		this.shadowRoot!.querySelectorAll('a[data-link]').forEach((link) => {
-			link.addEventListener('click', (event) => {
-				event.preventDefault();
-				const url = link.getAttribute('href') || '';
-				history.pushState(null, null, url);
-				this.loadContent(url);
-				this.updateActiveLink(url);
-			});
-		});
-		window.addEventListener('popstate', () => {
-			this.loadContent(window.location.pathname);
-			this.updateActiveLink(window.location.pathname);
-		});
-		this.loadContent(window.location.pathname);
+		this.shadowRoot?.addEventListener('click', this);
 		this.updateActiveLink(window.location.pathname);
 	}
-	async loadContent(url: string) {
-		const contentElement = document.getElementById('content-body');
-		if (!contentElement) {
-			return;
-		}
-		contentElement.innerHTML = '';
-		var link = this.links.filter((i: Link) => {
-			return i.href === url;
-		});
-		if (link.length > 0) {
-			await import(`../../${link[0].module}/${link[0].component}.js`);
-			contentElement.appendChild(document.createElement(link[0].tagName));
-		}
-	}
+
 	updateActiveLink(url: string) {
 		this.shadowRoot?.querySelectorAll('a[data-link]').forEach((link) => {
 			link.classList.toggle('active', link.getAttribute('href') === url);
 		});
+	}
+
+	handleEvent(e) {
+		e.preventDefault();
+		if (e.target.tagName == 'A') {
+			const url = e.target.getAttribute('href') || '';
+			window.router.loadRoute(url.split('/').slice(1).join('/'));
+			this.updateActiveLink(url);
+		} else if (e.target.tagName == 'SL-ICON') {
+			const url = e.target.parentElement.getAttribute('href') || '';
+			window.router.loadRoute(url.split('/').slice(1).join('/'));
+			this.updateActiveLink(url);
+		}
 	}
 }
 customElements.define('header-nav', Header);
