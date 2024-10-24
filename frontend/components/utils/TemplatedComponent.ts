@@ -2,6 +2,28 @@ export class TemplatedComponent extends HTMLElement {
 	static templateFile: string = '';
 	static templateCache: string | null = null;
 
+	constructor() {
+		super();
+		this.attachShadow({ mode: 'open' });
+	}
+
+	addBootstrap() {
+		const style = document.createElement('style');
+		style.textContent = `
+      @import url('/css/main.css');
+      @import url('node_modules/bootstrap/dist/css/bootstrap.min.css');
+    `;
+		this.shadowRoot?.appendChild(style);
+	}
+
+	addIcons() {
+		const style = document.createElement('style');
+		style.textContent = `
+      @import url('/node_modules/@shoelace-style/shoelace/dist/themes/light.css ');
+    `;
+		this.shadowRoot?.appendChild(style);
+	}
+
 	async loadTemplate(Component) {
 		//if (!Component.templateCache) {
 		if (true) {

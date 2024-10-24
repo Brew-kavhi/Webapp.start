@@ -4,6 +4,7 @@
   "main": ".eslintrc.js",
   "dependencies": {
     "@angular-eslint/eslint-plugin": "^18.1.0",
+    "@shoelace-style/shoelace": "^2.17.1",
     "abab": "^2.0.6",
     "acorn": "^8.12.1",
     "acorn-globals": "^7.0.1",
@@ -25,6 +26,7 @@
     "babel-preset-current-node-syntax": "^1.0.1",
     "babel-preset-jest": "^29.6.3",
     "balanced-match": "^1.0.2",
+    "bootstrap": "^5.3.3",
     "brace-expansion": "^1.1.11",
     "braces": "^3.0.3",
     "browserslist": "^4.23.2",
@@ -313,7 +315,7 @@
     "build-docker": "docker build .",
     "dev": "vite --host",
     "generate-openapi": "node ./npm-scripts/generate_kong_openapi.js",
-    "generate-api": "npm run generate-openapi && openapi-generator-cli generate -i ./api/merged-openapi.yaml -g typescript-axios -o ./api",
+    "generate-api": "npm run generate-openapi && openapi-generator-cli generate -i ./client_api/merged-openapi.yaml -g typescript-axios -o ./client_api",
     "build": "vite build",
     "create-component": "./npm-scripts/create-component.sh",
     "start": "echo 'Running docker development httpd server. Visit http://localhost:89/' && docker run -d -p 89:80 --mount src=$(pwd),target=/usr/local/apache2/htdocs/,type=bind --name webapp httpd  && docker logs --follow webapp"
