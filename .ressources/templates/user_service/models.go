@@ -11,18 +11,24 @@ import (
 
 // User struct represents a user in the system.
 type User struct {
-	ID          uint           `gorm:"primaryKey"`
-	Name        string         `gorm:"size:100;not null;unique"`
+	ID          uint           `gorm:"autoIncrement,primaryKey"`
+	Name        string         `gorm:"size:100;not null"`
+	LastName        string         `gorm:"size:100;not null;default:''"`
 	DisplayName string         `gorm:"size:100;not null"`
 	Icon              string                `json:"icon,omitempty"`
 	Credentials       DBCredentialSlice `gorm:"type:json"`
 	Email    string `gorm:"uniqueIndex"`
-	Password string
+	PasswordHash string
 }
 
 // DBCredential is a wrapper around webauthn.Credential
 type DBCredential struct {
     webauthn.Credential // Embed the original Credential type
+}
+
+type PasswordCredentials struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 // Implement the Valuer interface for storing as JSON

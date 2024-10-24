@@ -200,6 +200,7 @@ user-service:
 	cd user && go mod init user; \
 	echo "Installing GORM (GO object relation manager)"; \
 	go get -u gorm.io/gorm; \
+	go get golang.org/x/crypto/bcrypt; \
 	go get -u github.com/rs/cors; \
 	go get -u gorm.io/driver/sqlite; \
 	go get -u github.com/go-webauthn/webauthn; \
