@@ -50,7 +50,6 @@ import { TemplatedComponent } from '/components/utils/TemplatedComponent.js';
 class $componentName extends TemplatedComponent {
 	constructor() {
 		super();
-		this.attachShadow({ mode: 'open' });
 		$componentName.templateFile = '$directoryPath/$componentName-template.html';
 	}
 
