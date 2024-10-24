@@ -7,13 +7,12 @@
         <link rel="stylesheet" href="css/main.css">
         <link rel="manifest" href="manifest.json">
         <script src="https://unpkg.com/htmx.org@1.6.1"></script>
-        <script type="module" src="/js/main.js"></script>
-        <script type="module" src="/components/registration/Register.ts"></script>
-        <script type="module" src="/components/navigation/header/Header.ts"></script>
+        <script type="module" src="/components/utils/AppComponent.ts"></script>
+        <script type="module" src="/node_modules/@shoelace-style/shoelace/dist/shoelace.js"></script>
+	<script src="/components/utils/PasswordDialog.ts"></script>
+	<script type="module" src="/components/utils/InputComponent.ts"></script>
     </head>
     <body>
-        <header-nav></header-nav>
-        <div id='content-body'></div>
-        <register-page></register-page>
+        <app-component></app-component>
     </body>
 </html> 
