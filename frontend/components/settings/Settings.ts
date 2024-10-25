@@ -10,19 +10,19 @@
  * Copyright Marius Goehring
  */
 import { TemplatedComponent } from '/components/utils/TemplatedComponent.ts';
+import templateHTML from '/components/settings/settings.html';
 
 class Settings extends TemplatedComponent {
 	constructor() {
 		super();
-		Settings.templateFile = '/components/settings/settings.html';
 	}
 
 	connectedCallback() {
-		this.loadTemplate(Settings).then(() => this.render());
+		this.render();
 	}
 
 	render() {
-		this.shadowRoot.innerHTML = this.prepareHTML(Settings);
+		this.shadowRoot.innerHTML = this.dynamicHTML(templateHTML);
 	}
 }
 customElements.define('settings-page', Settings);

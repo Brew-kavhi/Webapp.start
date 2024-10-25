@@ -285,6 +285,7 @@
     "uri-js": "^4.4.1",
     "url-parse": "^1.5.10",
     "v8-to-istanbul": "^9.3.0",
+    "vite-plugin-string": "^1.2.3",
     "w3c-xmlserializer": "^4.0.0",
     "walker": "^1.0.8",
     "webidl-conversions": "^7.0.0",

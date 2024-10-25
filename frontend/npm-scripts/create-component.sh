@@ -46,19 +46,19 @@ componentContent=$(cat <<EOF
  * Copyright 
  */
 import { TemplatedComponent } from '/components/utils/TemplatedComponent.js';
+import templateHTML from '$directoryPath/$componentName-template.html';
 
 class $componentName extends TemplatedComponent {
 	constructor() {
 		super();
-		$componentName.templateFile = '$directoryPath/$componentName-template.html';
-	}
+	    }
 
 	connectedCallback() {
 		this.render();
 	}
 
 	render() {
-		this.shadowRoot.innerHTML = 'In am a $componentName component';
+	    this.shadowRoot.innerHTML = this.dynamicHTML(templateHTML);
 	}
 }
 customElements.define('$tagName', $componentName);

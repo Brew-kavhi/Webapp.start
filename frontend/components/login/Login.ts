@@ -12,19 +12,19 @@
 import { TemplatedComponent } from '/components/utils/TemplatedComponent.ts';
 import { authenticateUserBiometricCredentials } from '/js/pwa.ts';
 import { USER_API_HOST } from '/js/const/host.ts';
+import templateHTML from '/components/login/login.html';
 
 class Login extends TemplatedComponent {
 	constructor() {
 		super();
-		Login.templateFile = '/components/login/login.html';
 	}
 
 	connectedCallback() {
-		this.loadTemplate(Login).then(() => this.render());
+		this.render();
 	}
 
 	render() {
-		this.shadowRoot.innerHTML = this.prepareHTML(Login);
+		this.shadowRoot.innerHTML = this.dynamicHTML(templateHTML);
 		this.addBootstrap();
 		this.shadowRoot.addEventListener('click', this);
 		this.shadowRoot.addEventListener('submit', this);
