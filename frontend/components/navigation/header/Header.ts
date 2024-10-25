@@ -60,11 +60,11 @@ class Header extends TemplatedComponent {
 		e.preventDefault();
 		if (e.target.tagName == 'A') {
 			const url = e.target.getAttribute('href') || '';
-			window.router.loadRoute(url.split('/').slice(1).join('/'));
+			window.router.loadUrl(url);
 			this.updateActiveLink(url);
 		} else if (e.target.tagName == 'SL-ICON') {
 			const url = e.target.parentElement.getAttribute('href') || '';
-			window.router.loadRoute(url.split('/').slice(1).join('/'));
+			window.router.loadUrl(url);
 			this.updateActiveLink(url);
 		}
 	}
