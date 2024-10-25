@@ -30,7 +30,7 @@ export const routes: Route[] = [
 		module: 'settings',
 		tagName: 'settings-page',
 		protected: true,
-		hide: true
+		hide: true,
 	},
 	{
 		name: 'registration',

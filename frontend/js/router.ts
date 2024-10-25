@@ -12,7 +12,6 @@ export class Router {
 	loadUrl(url: string) {
 		let urlSegments = url.split('/').slice(1);
 		this.loadRoute(...urlSegments);
-
 	}
 	loadRoute(...urlSegments) {
 		let matchedRoute: Route = this._matchRoute(urlSegments);

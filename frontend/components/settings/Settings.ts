@@ -24,6 +24,5 @@ class Settings extends TemplatedComponent {
 	render() {
 		this.shadowRoot.innerHTML = this.prepareHTML(Settings);
 	}
-
 }
 customElements.define('settings-page', Settings);
