@@ -24,6 +24,15 @@ export const routes: Route[] = [
 		protected: true,
 	},
 	{
+		name: 'editProfile',
+		path: '/settings/editprofile',
+		component: 'EditProfile',
+		module: 'settings',
+		tagName: 'edit-profile',
+		protected: true,
+		hide: true,
+	},
+	{
 		name: 'settings',
 		path: '/settings',
 		component: 'Settings',
