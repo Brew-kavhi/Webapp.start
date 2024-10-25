@@ -24,6 +24,15 @@ export const routes: Route[] = [
 		protected: true,
 	},
 	{
+		name: 'settings',
+		path: '/settings',
+		component: 'Settings',
+		module: 'settings',
+		tagName: 'settings-page',
+		protected: true,
+		hide: true
+	},
+	{
 		name: 'registration',
 		path: '/register',
 		component: 'Register',
