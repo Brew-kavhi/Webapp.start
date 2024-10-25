@@ -113,6 +113,36 @@ export const UserParamsCreator = function(configuration?: Configuration) {
                 options: localVarRequestOptions
             };
         },
+        getUser: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = '/user/get';
+            const localVarUrlObj = new URL(localVarPath, USER_API_HOST);
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded({}, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions
+            };
+        },
+        updateUser: async (user?: User, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = '/user/update';
+            const localVarUrlObj = new URL(localVarPath, USER_API_HOST);
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(user, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions
+            };
+        },
     }
 }
 
@@ -130,6 +160,18 @@ export const UserAPIFp = function(configuration?: Configuration) {
             const userOperationServerIndex = configuration?.serverIndex ?? 0;
             const userOperationServerBasePath = operationServerMap['DefaultApi.deleteUser']?.[userOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(userAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, userOperationServerBasePath || basePath);
+        },
+        async getUser(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<User>> {
+            const userAxiosArgs = await userAxiosParamCreator.getUser(options);
+            const userOperationServerIndex = configuration?.serverIndex ?? 0;
+            const userOperationServerBasePath = operationServerMap['DefaultApi.getUser']?.[userOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(userAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, userOperationServerBasePath || basePath);
+        },
+        async updateUser(user?: User, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<User>> {
+            const userAxiosArgs = await userAxiosParamCreator.updateUser(user, options);
+            const userOperationServerIndex = configuration?.serverIndex ?? 0;
+            const userOperationServerBasePath = operationServerMap['DefaultApi.updateUser']?.[userOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(userAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, userOperationServerBasePath || basePath);
         }
     };
 }
@@ -142,6 +184,12 @@ export const UserAPIFactory = function (configuration?: Configuration, basePath?
         },
         deleteUser(deleteUserReq?: DeleteUserRequest, options?: RawAxiosRequestConfig): AxiosPromise<User> {
             return userFp.deleteUser(deleteUserReq, options).then((request) => request(axios, basePath));
+        },
+        getUser(ptions?: RawAxiosRequestConfig): AxiosPromise<User> {
+            return userFp.getUser(options).then((request) => request(axios, basePath));
+        },
+        updateUser(user?: User, options?: RawAxiosRequestConfig): AxiosPromise<User> {
+            return userFp.updateUser(user, options).then((request) => request(axios, basePath));
         },
     }
 };
@@ -169,5 +217,29 @@ export class UserAPI extends BaseAPI {
      */
     public deleteUser(deleteUserReq?: DeleteUserRequest, options?: RawAxiosRequestConfig) {
         return UserAPIFp(this.configuration).deleteUser(deleteUserReq,options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary get a users information
+     * @param {user} [user] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof UserAPI
+     */
+    public getUser(options?: RawAxiosRequestConfig) {
+        return UserAPIFp(this.configuration).getUser(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary update a users information
+     * @param {user} [user] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof UserAPI
+     */
+    public updateUser(user?: User, options?: RawAxiosRequestConfig) {
+        return UserAPIFp(this.configuration).updateUser(user,options).then((request) => request(this.axios, this.basePath));
     }
 }
