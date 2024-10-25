@@ -143,6 +143,10 @@ export class InputComponent extends HTMLElement {
 	get value() {
 		return this.input.value;
 	}
+
+	set value(value: string) {
+		this.input.value = value;
+	}
 }
 
 customElements.define('input-field', InputComponent);

@@ -90,6 +90,14 @@ export class FormComponent extends HTMLElement {
 		this.renderForm();
 	}
 
+	setValues(value: T) {
+		this.dataFields.forEach((element: FieldScheme) => {
+			if (value[element.name]) {
+				this.inputs[element.name].value = value[element.name];
+			}
+		});
+	}
+
 	validateInputs(): boolean {
 		let valid: boolean = false;
 		let msg: string;
@@ -119,7 +127,9 @@ export class FormComponent extends HTMLElement {
 		// create a new object of type DataScheme.
 		var object = new this.dataScheme();
 		for (const key in object) {
-			object[key] = this.inputs[key].value;
+			if (key in this.inputs) {
+				object[key] = this.inputs[key].value;
+			}
 		}
 
 		this.dispatchEvent(
