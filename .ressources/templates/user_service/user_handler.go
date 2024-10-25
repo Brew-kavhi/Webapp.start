@@ -15,8 +15,21 @@ type RegisterUserRequest struct {
 	Password string `json:"password"`
 }
 
+type UpdateUserRequest struct {
+	Name string `json:"name"`
+	LastName string `json:"lastName"`
+	Email    string `json:"email"`
+}
+
+
 type DeleteUserRequest struct {
 	Password string `json:"password"`
+}
+
+type GetUserResponse struct {
+	Name string `json:"name"`
+	LastName string `json:"lastName"`
+	Email    string `json:"email"`
 }
 
 func (userDB *UserDB) registerNewUser(w http.ResponseWriter, r *http.Request) {
@@ -72,6 +85,63 @@ func (userDB *UserDB) editUser(w http.ResponseWriter, r *http.Request) {
 
 	// save the user
 	fmt.Printf("%v", userID)
+	w.WriteHeader(http.StatusOK)
+}
+
+func (userDB *UserDB) getUser(w http.ResponseWriter, r *http.Request) {
+	// Function to edit a user. Here i need to retrieve the user from the cookie. also validate it.
+	userID := r.Context().Value("user_id")
+
+	// next decode the body into a userEdit object. 
+	userIDInt, _ := strconv.ParseUint(userID.(string), 10, 32)
+	user, err := userDB.GetUserById(uint(userIDInt))
+	if err != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+	// encode user in the GetUserReponse object and return that
+	response := GetUserResponse{
+		Name: user.Name,
+		LastName : user.LastName,
+		Email: user.Email,
+	}
+
+	// Set header to application/json and encode the response as JSON
+        w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode(response)
+}
+
+func (userDB *UserDB) updateUser(w http.ResponseWriter, r *http.Request) {
+	// Function to edit a user. Here i need to retrieve the user from the cookie. also validate it.
+	userID := r.Context().Value("user_id")
+
+	// next decode the body into a userEdit object. 
+	var req UpdateUserRequest
+
+	// Decode the request body
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		return
+	}
+	// save the user
+	userIDInt, _ := strconv.ParseUint(userID.(string), 10, 32)
+	user, err := userDB.GetUserById(uint(userIDInt))
+	if err != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+	if req.Name != "" {
+		user.Name = req.Name
+	}
+	if req.LastName != "" {
+		user.LastName = req.LastName
+	}
+	if req.Email != "" {
+		user.Email = req.Email
+	}
+	fmt.Printf("%v", req)
+	fmt.Printf("%v", user)
+	userDB.DB.Save(user)
 	w.WriteHeader(http.StatusOK)
 }
 
