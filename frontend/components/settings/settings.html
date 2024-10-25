@@ -1,0 +1,36 @@
+<div id='settingscontainer'>
+	<div>
+		<h3>Settings</h3>
+	</div>
+	<ul>
+		<li onclick="alert('hi')"><a>Third party</a></li>
+		<li onclick='window.router.loadRoute("deleteprofile")'><a >Delete Profile</a></li>
+		<li onclick="window.router.loadRoute('settings/editprofile')"><a>Edit Profile</a></li>
+	</ul>
+</div>
+<style>
+#settingscontainer {
+	border: 1px solid lightgray;
+    border-radius: 10px;
+    margin: auto;
+    width: fit-content;
+    min-width: 25%;
+}
+h3, li {
+	padding: 0.5rem 1.75rem;
+	display: block;
+	cursor: pointer;
+}
+h3 {
+	font-size: 24px;
+	background: whitesmoke;
+	margin:0 !important;
+}
+li {
+	border-top: 1px solid lightgray;
+}
+ul {
+	padding-left: 0px;
+	margin: 0px;
+}
+</style>
