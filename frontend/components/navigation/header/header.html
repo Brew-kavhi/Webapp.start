@@ -1,4 +1,3 @@
-<link rel="stylesheet" href="components/navigation/header/header.css" />
 <nav>
 	<div style="width: 100%">${navItems}</div>
 	<div>
@@ -10,3 +9,26 @@
 		</a>
 	</div>
 </nav>
+<style>
+nav {
+	display: flex;
+	gap: 15px;
+	width: -webkit-fill-available;
+	justify-content: space-between;
+	margin: 0 2em;
+}
+
+nav > div {
+	display: flex;
+}
+a {
+	text-decoration: none;
+	color: #007bff;
+	cursor: pointer;
+	margin-right: 1em;
+}
+
+a.active {
+	font-weight: bold;
+}
+</style>
