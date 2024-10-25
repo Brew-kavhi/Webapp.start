@@ -25,16 +25,17 @@ export class TemplatedComponent extends HTMLElement {
 	}
 
 	async loadTemplate(Component) {
-		//if (!Component.templateCache) {
-		if (true) {
-			//Fetch the template only if not cached
-			const templateResponse = await fetch(Component.templateFile);
-			Component.templateCache = await templateResponse.text();
-		}
+		const { default: templateHTML } = await import(Component.templateFile);
+		Component.templateCache = templateHTML;
 	}
 
 	prepareHTML(Component) {
 		return Component.templateCache.replace(/\${(.*?)}/g, (x, g) =>
+			getValueByPath(this, g)
+		);
+	}
+	dynamicHTML(html: string) {
+		return html.replace(/\${(.*?)}/g, (x, g) =>
 			getValueByPath(this, g)
 		);
 	}

@@ -1,17 +1,17 @@
 import { TemplatedComponent } from '/components/utils/TemplatedComponent';
+import templateHTML from '/components/utils/templates/not_found.html';
 
 export class NotFound extends TemplatedComponent {
 	constructor() {
 		super();
-		NotFound.templateFile = '/components/utils/templates/not_found.html';
 	}
 
 	connectedCallback() {
-		this.loadTemplate(NotFound).then(() => this.render());
+		this.render();
 	}
 
 	render() {
-		this.shadowRoot.innerHTML = this.prepareHTML(NotFound);
+		this.shadowRoot.innerHTML = this.dynamicHTML(templateHTML);
 	}
 }
 customElements.define('not-found', NotFound);

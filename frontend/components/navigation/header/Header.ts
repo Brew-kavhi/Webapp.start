@@ -11,6 +11,7 @@
  */
 import { routes } from '/js/const/routes.js';
 import { TemplatedComponent } from '/components/utils/TemplatedComponent';
+import templateHTML from '/components/navigation/header/header.html';
 
 class Header extends TemplatedComponent {
 	private routes: Route[];
@@ -29,7 +30,6 @@ class Header extends TemplatedComponent {
 				return '';
 			})
 			.join('');
-		Header.templateFile = '/components/navigation/header/header.html';
 	}
 	set navigationLinks(routes: Route[]) {
 		this.routes = routes;
@@ -37,11 +37,11 @@ class Header extends TemplatedComponent {
 	}
 
 	connectedCallback() {
-		this.loadTemplate(Header).then(() => this.render());
+		this.render();
 	}
 
 	render() {
-		this.shadowRoot.innerHTML = this.prepareHTML(Header);
+		this.shadowRoot.innerHTML = this.dynamicHTML(templateHTML);
 		this.setupNavigation();
 		this.addIcons();
 	}

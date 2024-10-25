@@ -13,19 +13,19 @@ import { TemplatedComponent } from '/components/utils/TemplatedComponent.ts';
 import { registerUserBiometricCredentials } from '/js/pwa.ts';
 import { USER_API_HOST } from '/js/const/host.ts';
 import { User } from '/client_api/userModel';
+import templateHTML from '/components/registration/register.html';
 
 class Register extends TemplatedComponent {
 	constructor() {
 		super();
-		Register.templateFile = '/components/registration/register.html';
-	}
+			}
 
 	connectedCallback() {
-		this.loadTemplate(Register).then(() => this.render());
+		this.render();
 	}
 
 	render() {
-		this.shadowRoot.innerHTML = this.prepareHTML(Register);
+		this.shadowRoot.innerHTML = this.dynamicHTML(templateHTML);
 		this.addBootstrap();
 		let user = new User();
 		console.log(Object.keys(user));

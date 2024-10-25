@@ -1,4 +1,6 @@
 import { defineConfig } from 'vite';
+import stringPlugin from 'vite-plugin-string';
+
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -17,5 +19,10 @@ export default defineConfig({
       },
     },
   },
+  plugins: [
+    stringPlugin({
+      include: '**/*.html' // Optionally, specify which HTML files to include
+    })
+  ]
 });
 

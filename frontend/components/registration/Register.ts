@@ -16,6 +16,7 @@ import { FieldScheme, InputType } from '/js/types/FieldScheme';
 import '/components/utils/FormComponent.ts';
 import { TemplatedComponent } from '/components/utils/TemplatedComponent';
 import { USER_API_HOST } from '/js/const/host';
+import templateHTML from '/components/registration/register.html';
 
 class Register extends TemplatedComponent {
 	private configuration: Configuration;
@@ -58,15 +59,14 @@ class Register extends TemplatedComponent {
 				required: true,
 			},
 		];
-		Register.templateFile = '/components/registration/register.html';
 	}
 
 	connectedCallback() {
-		this.loadTemplate(Register).then(() => this.render());
+		this.render();
 	}
 
 	render() {
-		this.shadowRoot!.innerHTML = this.prepareHTML(Register);
+		this.shadowRoot!.innerHTML = this.dynamicHTML(templateHTML);
 		this.form = document.createElement('form-component');
 		this.form.setFields(this.fields);
 		this.shadowRoot.appendChild(this.form);

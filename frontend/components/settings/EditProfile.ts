@@ -16,6 +16,7 @@ import { FieldScheme, InputType } from '/js/types/FieldScheme';
 import { USER_API_HOST } from '/js/const/host';
 import { TemplatedComponent } from '/components/utils/TemplatedComponent.ts';
 import { FormComponent } from '/components/utils/FormComponent';
+import templateHTML from '/components/settings/edit_profile.html';
 
 class EditProfile extends TemplatedComponent {
 	private configuration: Configuration;
@@ -52,11 +53,10 @@ class EditProfile extends TemplatedComponent {
 				required: true,
 			},
 		];
-		EditProfile.templateFile = '/components/settings/edit_profile.html';
 	}
 
 	connectedCallback() {
-		this.loadTemplate(EditProfile).then(() => this.render());
+		this.render();
 	}
 
 	render() {
@@ -70,7 +70,7 @@ class EditProfile extends TemplatedComponent {
 		}).catch((error)=>{
 				console.log(error);
 		});
-		this.shadowRoot.innerHTML = this.prepareHTML(EditProfile);
+		this.shadowRoot.innerHTML = this.dynamicHTML(templateHTML);
 		this.form = document.createElement('form-component') as FormComponent;
 		this.form.setFields(this.fields);
 		this.shadowRoot.appendChild(this.form);

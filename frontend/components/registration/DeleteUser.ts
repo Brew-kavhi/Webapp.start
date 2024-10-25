@@ -13,6 +13,7 @@ import { TemplatedComponent } from '/components/utils/TemplatedComponent.ts';
 import { Configuration } from '../../client_api';
 import { UserAPI } from '../../client_api/userModel';
 import { USER_API_HOST } from '/js/const/host';
+import templateHTML from '/components/registration/delete_user.html';
 
 class DeleteUser extends TemplatedComponent {
 	private configuration: Configuration;
@@ -20,7 +21,6 @@ class DeleteUser extends TemplatedComponent {
 
 	constructor() {
 		super();
-		DeleteUser.templateFile = '/components/registration/delete_user.html';
 		this.configuration = new Configuration({
 			basePath: USER_API_HOST,
 			baseOptions: {
@@ -32,11 +32,11 @@ class DeleteUser extends TemplatedComponent {
 	}
 
 	connectedCallback() {
-		this.loadTemplate(DeleteUser).then(() => this.render());
+		this.render();
 	}
 
 	render() {
-		this.shadowRoot!.innerHTML = this.prepareHTML(DeleteUser);
+		this.shadowRoot.innerHTML = templateHTML;
 		this.addBootstrap();
 		this.addIcons();
 		this.shadowRoot!.addEventListener('click', this);
