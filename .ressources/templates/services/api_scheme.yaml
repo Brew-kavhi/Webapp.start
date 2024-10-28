@@ -1,0 +1,151 @@
+openapi: 3.0.0
+info:
+  title: API for service {{MODULE}}
+  description: This is the api scheme for service '{{MODULE}}', where all models and endpoints for this service are defined
+  version: 0.0.1
+
+servers:
+  - url: http://localhost:8080
+
+paths:
+  /{{MODULE}}/{id}:
+    get:
+      tags:
+        - {{MODULE}}
+      summary: Get instance of {{MODULE}}
+      description: Get instance of {{MODULE}} by id
+      operationId: get{{MODULE}}
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: One instances of {{MODULE}}
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/{{MODULE}}Response"
+        "400":
+          description: Invalid ID supplied
+        "401":
+          description: {{MODULE}} not found
+    put:
+      tags:
+        - {{MODULE}}
+      summary: Update instance of {{MODULE}}
+      operationId: update{{MODULE}}
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Update a user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Update{{MODULE}}Request'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Update{{MODULE}}Request'
+      responses:
+        "200":
+          description: One instances of {{MODULE}}
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/{{MODULE}}Response"
+        "400":
+          description: Invalid Input
+        "422":
+          description: Validation exception
+    delete:
+      tags:
+        - {{MODULE}}
+      summary: Deletes a {{MODULE}}
+      operationId: delete{{MODULE}}
+      parameters:
+        - name: id
+          in: path
+          description: {{MODULE}} id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "400":
+          description: Invalid value
+  /{{MODULE}}:
+    get:
+      tags:
+        - {{MODULE}}
+      summary: Get all instances of {{MODULE}}
+      operationId: list{{MODULE}}
+      responses:
+        "200":
+          description: A list of instances of {{MODULE}}
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/{{MODULE}}Response"
+    post:
+      tags:
+        - {{MODULE}}
+      summary: Create a new instance of {{MODULE}}
+      operationId: create{{MODULE}}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/New{{MODULE}}Request"
+      responses:
+        "201":
+          description: Instance of {{MODULE}} created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/{{MODULE}}"
+components:
+  schemas:
+    {{MODULE}}:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        hr_id:
+          type: string
+        producer:
+          type: string
+    {{MODULE}}Response:
+      type: object
+      properties:
+        hr_id:
+          type: string
+        producer:
+          type: string
+    New{{MODULE}}Request:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        hr_id:
+          type: string
+    Update{{MODULE}}Request:
+      type: object
+      properties:
+        hr_id:
+          type: string
+        producer:
+          type: string
