@@ -13,7 +13,7 @@ import { User } from '/client_api/userModel';
 import { Configuration } from '/client_api';
 import { UserAPI } from '/client_api/userModel';
 import { FieldScheme, InputType } from '/js/types/FieldScheme';
-import '/components/utils/FormComponent.ts';
+import { FormComponent } from '/components/utils/FormComponent.ts';
 import { TemplatedComponent } from '/components/utils/TemplatedComponent';
 import { USER_API_HOST } from '/js/const/host';
 import templateHTML from '/components/registration/register.html';
@@ -74,10 +74,6 @@ class Register extends TemplatedComponent {
 		this.form.setHTML(template.innerHTML);
 		this.form.setDataScheme(User);
 		this.shadowRoot.addEventListener('form-submitted', this);
-	}
-
-	validatePassword(value: string): [boolean, string] {
-		return [true, 'Alles gut'];
 	}
 
 	async handleEvent(e) {
