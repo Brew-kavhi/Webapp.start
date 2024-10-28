@@ -60,16 +60,19 @@ class EditProfile extends TemplatedComponent {
 	}
 
 	render() {
-		this.userAPI.getUser().then((response)=>{
-			if (response.data) {
-				this.form.setValues(response.data);
-			} else {
-				console.log("error in getting user data");
-				console.log(response);
-			}
-		}).catch((error)=>{
+		this.userAPI
+			.getUser()
+			.then((response) => {
+				if (response.data) {
+					this.form.setValues(response.data);
+				} else {
+					console.log('error in getting user data');
+					console.log(response);
+				}
+			})
+			.catch((error) => {
 				console.log(error);
-		});
+			});
 		this.shadowRoot.innerHTML = this.dynamicHTML(templateHTML);
 		this.form = document.createElement('form-component') as FormComponent;
 		this.form.setFields(this.fields);
@@ -85,11 +88,14 @@ class EditProfile extends TemplatedComponent {
 		var user = e.detail;
 		console.log(user);
 		// store user in the backend
-		this.userAPI.updateUser(user).then((response)=>{
-			alert('success');
-		}).catch((error)=>{
+		this.userAPI
+			.updateUser(user)
+			.then((response) => {
+				alert('success');
+			})
+			.catch((error) => {
 				console.log(error);
-		});
+			});
 	}
 }
 customElements.define('edit-profile', EditProfile);

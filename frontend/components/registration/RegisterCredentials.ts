@@ -18,7 +18,7 @@ import templateHTML from '/components/registration/register.html';
 class Register extends TemplatedComponent {
 	constructor() {
 		super();
-			}
+	}
 
 	connectedCallback() {
 		this.render();
