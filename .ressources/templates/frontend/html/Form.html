@@ -1,0 +1,17 @@
+<template id="${modelName}-form-template">
+<div class="bg-light p-5 rounded w-50 m-auto">
+    <h1 class="mb-4 text-center">New ${className}</h1>
+    <div class="text-center" id="message"></div>
+    <div class="mb-3">
+        <form id="${modelName}-form">
+            ${fields
+		.map(
+			(field) =>
+				`<div class="form-group mb-3" slot-name="${field.name}"></div>`
+		)
+		.join('\n')}
+            <button class="btn btn-primary" type="submit">Submit</button>
+        </form>
+    </div>
+</div>
+</template>
