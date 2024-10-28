@@ -68,6 +68,7 @@
     "domexception": "^4.0.0",
     "domhandler": "^5.0.3",
     "domutils": "^3.1.0",
+    "dotenv": "^16.4.5",
     "electron-to-chromium": "^1.5.3",
     "emittery": "^0.13.1",
     "emoji-regex": "^8.0.0",
