@@ -71,9 +71,16 @@ generate-stubs:
 		echo "Usage: make generate-stubs module=<module_name>"; \
 		exit 1; \
 	fi
+	$(eval CAPITALIZED_NAME=$(shell echo $(module) | sed 's/.*/\u&/'))
 	@echo "generating stubs for module $(module)"
-	@cd $(module) && openapi-generator-cli generate -i api_scheme.yaml -g go-server -o .;\
+	@cd $(module) && openapi-generator-cli generate -i api_scheme.yaml -g go-server -o . -t ../../.ressources/templates/openapi/go-server;\
+	go get gorm.io/gorm; \
+	go get gorm.io/driver/sqlite; \
+	go get github.com/rs/cors; \
 	go mod tidy; \
+	sed -e 's/{{MODULE}}/$(module)/g' \
+		-e 's/{{CAP_MODULE}}/$(CAPITALIZED_NAME)/g' \
+			../../.ressources/templates/services/database.go > go/$(module)DB.go; \
 	echo "adding the databae connection to main.go"; \
 
 
