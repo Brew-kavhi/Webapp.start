@@ -317,7 +317,7 @@
     "build-docker": "docker build .",
     "dev": "vite --host",
     "generate-openapi": "node ./npm-scripts/generate_kong_openapi.js",
-    "generate-api": "npm run generate-openapi && openapi-generator-cli generate -i ./client_api/merged-openapi.yaml -g typescript-axios -o ./client_api",
+    "generate-api": "npm run generate-openapi && openapi-generator-cli generate -i ./client_api/merged-openapi.yaml -g typescript-axios -o ./client_api -t ../.ressources/templates/openapi/axios",
     "build": "vite build",
     "create-component": "./npm-scripts/create-component.sh",
     "start": "echo 'Running docker development httpd server. Visit http://localhost:89/' && docker run -d -p 89:80 --mount src=$(pwd),target=/usr/local/apache2/htdocs/,type=bind --name webapp httpd  && docker logs --follow webapp"
