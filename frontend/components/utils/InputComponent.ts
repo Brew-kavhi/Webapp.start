@@ -141,7 +141,11 @@ export class InputComponent extends HTMLElement {
 
 	// Return the current input value
 	get value() {
-		return this.input.value;
+		let value = this.input.value;
+		if (this._field.type == InputType.Number) {
+			value = Number(value);
+		}
+		return value;
 	}
 
 	set value(value: string) {
