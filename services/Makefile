@@ -241,8 +241,12 @@ create-service:
 		sed -i.bak '/^MODULES := / s/$$/ $(name)/' $(MAKEFILE_LIST); \
 		echo "$(name) added to MODULES"; \
 		echo "Creating a base openapi scheme"; \
-		echo "openapi: 3.0.0\ninfo:\n title: $(name)-api\n description: This is the api scheme for service '$(name)', where all models and endpoints for this service are defined\n version: 0.0.1\n\nservers:\n - url: ${SERVICES_HOST}:8080\n   description: Local development server\n\npaths:\n /$(name):\n  get:\n   summary: Get all instances of $(name)\n   operationId: list$(CAPITALIZED_NAME)\n   responses:\n    '200':\n     description: A list of instances of $(name)\n     content:\n      application/json:\n       schema:\n        type: array\n        items:\n         \044ref: '#/components/schemas/$(CAPITALIZED_NAME)'\n  post:\n   summary: Create a new instance of $(name)\n   operationId: create$(CAPITALIZED_NAME)\n   requestBody:\n    content:\n     application/json:\n       schema:\n        \044ref: '#/components/schemas/New$(CAPITALIZED_NAME)'\n   responses:\n    '201':\n     description: Instance of $(name) created\n     content:\n      application/json:\n       schema:\n        \044ref: '#/components/schemas/$(CAPITALIZED_NAME)'\ncomponents:\n schemas:\n  $(CAPITALIZED_NAME):\n   type: object\n   properties:\n    id:\n     type: integer\n     format: int64\n    hr_id:\n     type: string\n  New$(CAPITALIZED_NAME):\n   type: object\n   properties:\n    id:\n     type: integer\n     format: int64\n    hr_id:\n     type: string" > api_scheme.yaml; \
+		sed \
+			-e 's/{{MODULE}}/$(CAPITALIZED_NAME)/g' \
+			../../.ressources/templates/services/api_scheme.yaml > api_scheme.yaml; \
 		echo "Creating $(name)_test.go for $(name)"; \
+		cp ../../.ressources/templates/services/middleware.go middleware.go; \
+		cp ../../.ressources/templates/services/utils.go utils.go; \
 		echo 'package main\n\nimport "testing"\n\nfunc TestMain(t *testing.T) {\n\texpected := "Hello, world!"\n\tactual := "Hello, world!"\n\tif actual != expected {\n\t\tt.Errorf("expected %v, got %v", expected, actual)\n\t}\n}' > $(name)_test.go; \
 		go get github.com/stretchr/testify; \
 		echo "Adding service to docker compose"; \
