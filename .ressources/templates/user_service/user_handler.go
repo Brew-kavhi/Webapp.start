@@ -162,7 +162,6 @@ func (userDB *UserDB) deleteUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userID := r.Context().Value("user_id")
-	fmt.Printf("sub type: %T\n", userID)
 	userIDInt, _ := strconv.ParseUint(userID.(string), 10, 32)
 	deleteErr := userDB.DeleteUser(uint(userIDInt), req.Password)
 	if deleteErr != nil {
