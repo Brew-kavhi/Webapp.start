@@ -1,21 +1,31 @@
 <style>
     p {margin: 0;}
     .card {
-        border-radius: 10px;
-        border: 1px solid lightgray;
+	    border-radius: 10px;
+	    border: 1px solid lightgray;
+	    margin: 1rem;
+	    overflow: hidden;
     }
     .card-header {
+	    padding: 0rem 1rem;
+    border-bottom: 1px solid lightgray;
+    background: whitesmoke;
+    }
+    .card-header h3 {
+	    margin: 0;
+	    padding: 0.75rem 1rem;
     }
     .card-content {
+	    padding: 0.5rem 1rem;
     }
     .card-footer {
     }
 </style>
 <div id="card" class="card">
-    <div class="card-header">
-	    <h3>${'${this.header}'}</h3>
+	<div class="card-header">
+	    <h3>${'${header}'}</h3>
     </div>
     <div class="card-content">
-        ${fields.map((field) => `<p><strong>${capitalize(field.name)}:</strong> \${this.${field.name}}</p>`).join('\n')}
+        ${fields.map((field) => `<p><strong>${capitalize(field.name)}:</strong> \${${field.name}}</p>`).join('\n')}
     </div>
 </div>

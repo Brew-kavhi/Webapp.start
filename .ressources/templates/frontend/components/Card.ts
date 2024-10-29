@@ -8,6 +8,7 @@ export class ${className}Card extends TemplatedComponent {
       private configuration: Configuration;
       private api: ${className}Api;
       private attributeSet: boolean = false;
+      private ${modelName}: ${className};
 
       constructor() {
         super();
@@ -25,10 +26,18 @@ export class ${className}Card extends TemplatedComponent {
       }
 
       attributeChangedCallback(name, oldValue, newValue) {
-        this[name] = newValue;
-        this.attributeSet = true;
-        this.render();
+      		if (oldValue != newValue) {
+		        this[name] = newValue;
+		        this.attributeSet = true;
+        		this.render();
+		}
       }
+
+      set${className}(${modelName}: ${className}) {
+		this.${modelName} = ${modelName};
+		${fields.map((field) => `this.${field.name} = ${modelName}.${field.name};`).join('\n\t\t')}
+		this.render();
+	}
 
       connectedCallback() {
         this.render();
@@ -36,7 +45,16 @@ export class ${className}Card extends TemplatedComponent {
 
       render() {
         this.shadowRoot.innerHTML = this.dynamicHTML(templateHTML);
+	this.shadowRoot.addEventListener('click', this);
       }
+
+      handleEvent(e) {
+		console.log(e);
+		if (e.type ==='click' && e.target.tagName ==='H3') {
+			e.preventDefault();
+			window.router.loadUrl(`/coffee/${'${this.id}'}`, this.${modelName});
+		}
+	}
 }
 
 customElements.define('${modelName}-card', ${className}Card);
