@@ -67,6 +67,10 @@ func (userDB *UserDB) AddUser(user *User) (error) {
 	return err	
 }
 
+func (userDB *UserDB) UpdateUser(user *User) (error) {
+	return userDB.DB.Save(&user).Error
+}
+
 func (userDB *UserDB) DeleteUser(userID uint, password string) (error) {
 	fmt.Printf("%v", userID)
 	user, err := userDB.GetUserById(userID)

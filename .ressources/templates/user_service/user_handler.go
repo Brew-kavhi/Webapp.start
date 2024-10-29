@@ -114,23 +114,16 @@ func (userDB *UserDB) updateUser(w http.ResponseWriter, r *http.Request) {
 	}
 	// save the user
 	userIDInt, _ := strconv.ParseUint(userID.(string), 10, 32)
-	user, err := userDB.GetUserById(uint(userIDInt))
+	user := &User{
+		ID: uint(userIDInt),
+		Name: req.Name,
+		LastName: req.LastName,
+		Email: req.Email,
+	}
+	err := userDB.UpdateUser(user)
 	if err != nil {
-		http.Error(w, "User not found", http.StatusNotFound)
-		return
+		w.WriteHeader(500)
 	}
-	if req.Name != "" {
-		user.Name = req.Name
-	}
-	if req.LastName != "" {
-		user.LastName = req.LastName
-	}
-	if req.Email != "" {
-		user.Email = req.Email
-	}
-	fmt.Printf("%v", req)
-	fmt.Printf("%v", user)
-	userDB.DB.Save(user)
 	w.WriteHeader(http.StatusOK)
 }
 
