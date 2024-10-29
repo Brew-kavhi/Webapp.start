@@ -8,10 +8,10 @@ export class ${className}Details extends TemplatedComponent {
       private configuration: Configuration;
       private api: ${className}Api;
       private attributeSet: boolean = false;
+      ${fields.map((field) => `private ${field.name} = '';`).join('\n        ')}
 
       constructor() {
         super();
-        ${fields.map((field) => `this.${field.name} = '';`).join('\n        ')}
 		this.configuration = new Configuration({
 			basePath: ${className}_API_HOST,
 			baseOptions: {
@@ -26,9 +26,17 @@ export class ${className}Details extends TemplatedComponent {
       }
 
       attributeChangedCallback(name, oldValue, newValue) {
-          this[name] = newValue;
-          this.attributeSet = true;
-          this.render();
+          if (oldvalue !== newValue) {
+              this[name] = newValue;
+              this.attributeSet = true;
+              this.render();
+          }
+      }
+
+      setData(data: ${className}) {
+		this.${modelName} = data;
+		${fields.map((field) => `this.${field.name} = data.${field.name};`).join('\n\t\t')}
+		this.render();
       }
 
       connectedCallback() {
@@ -36,16 +44,22 @@ export class ${className}Details extends TemplatedComponent {
       }
 
       render() {
+          if (!this.${modelName}) {
+              if (this.data) {
+                    this.${modelName} = this.data;
+                    ${fields.map((field) => `this.${field.name} = this.data.${field.name};`).join('\n\t\t')}
+              } else {
+                  this.get${className}();
+              }
+          }
           this.shadowRoot.innerHTML = this.dynamicHTML(templateHTML);
       }
 
       get${className}() {
-          this.api.get${className}().then((response) =>{
+          this.api.get${className}(this.params['id']).then((response) =>{
               if (response.status == 200) {
                   const ${modelName}: ${className} = response.data as ${className};
-                  for(const key in response.data) {
-                      this[key] = ${modelName}[key];
-                  }
+                  this.setData(${modelName});
               }
           }).catch((error)=>{console.log(error);});
       }
