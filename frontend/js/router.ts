@@ -2,6 +2,7 @@ import { USER_API_HOST } from '/js/const/host.ts';
 
 export class Router {
 	private routes: Route[];
+	private routeData: any|undefined = undefined; 
 
 	constructor(routes: Route[], isAuthenticated: () => boolean) {
 		this.routes = routes;
@@ -9,8 +10,11 @@ export class Router {
 		window.addEventListener('popstate', () => this._loadRoute());
 	}
 
-	loadUrl(url: string) {
+	loadUrl(url: string, routeData?: any) {
 		let urlSegments = url.split('/').slice(1);
+		if (routeData) {
+			this.routeData = routeData;
+		}
 		this.loadRoute(...urlSegments);
 	}
 	loadRoute(...urlSegments) {
@@ -109,6 +113,8 @@ export class Router {
 		).then((componentModule) => {
 			const component = document.createElement(matchedRoute.tagName);
 			if (params) component.params = params;
+			if (this.routeData) component.data = this.routeData;
+			this.routeData = undefined;
 
 			document
 				.getElementsByTagName('app-component')[0]
