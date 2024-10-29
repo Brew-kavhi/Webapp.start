@@ -20,8 +20,8 @@ export class ${className}List extends TemplatedComponent {
       }
 
       connectedCallback() {
-          this.getAll${className}();
           this.render();
+          this.getAll${className}();
       }
 
       render() {
@@ -29,15 +29,16 @@ export class ${className}List extends TemplatedComponent {
           this.shadowRoot.innerHTML = this.dynamicHTML(templateHTML);
       }
 
-      getAll${className}() {
+      async getAll${className}() {
+          await import('/components/${serviceName}/${className}Card.ts');
           this.api.list${className}().then((response) =>{
               if (response.status == 200) {
                   const container = this.shadowRoot.querySelector('#content');
-                  for (const ${modelName}Data: ${className} in response.data) {
-                      const ${modelName}Card = document.createElement('${modelName}-list');
+                  for (const ${modelName}Data: ${className} of response.data) {
+                      const ${modelName}Card = document.createElement('${modelName}-card');
                       // for every field of $modelName set Attribute
-                      ${fields.map((field) => `${modelName}Card.setAttribute('${field.name}', ${modelName}Data['${field.name}']);`).join('\n')}
                       container.appendChild(${modelName}Card);
+                      ${modelName}Card.set${className}(${modelName}Data);
                   }
               }
           }).catch((error)=>{console.log(error);});
