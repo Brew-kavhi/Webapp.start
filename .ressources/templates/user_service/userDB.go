@@ -68,7 +68,7 @@ func (userDB *UserDB) AddUser(user *User) (error) {
 }
 
 func (userDB *UserDB) UpdateUser(user *User) (error) {
-	return userDB.DB.Save(&user).Error
+	return userDB.DB.Model(&user).Updates(&user).Error
 }
 
 func (userDB *UserDB) DeleteUser(userID uint, password string) (error) {
