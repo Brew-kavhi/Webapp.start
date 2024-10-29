@@ -54,7 +54,6 @@ export class ${className}Form extends TemplatedComponent {
 				.create${className}(${modelName})
 				.then((response) => {
 					if (response.status == 201) {
-						alert('successfully created');
 						window.router.loadUrl('/');
 					}
 				})
