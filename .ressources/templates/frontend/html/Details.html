@@ -1,4 +1,4 @@
 <style>
     p {margin: 0;}
 </style>
-${fields.map((field) =>`<p><strong>${capitalize(field.name)}:</strong> \${this.${field.name}}</p>`).join('\n')}
+${fields.map((field) =>`<p><strong>${capitalize(field.name)}:</strong> \${${field.name}}</p>`).join('\n')}
