@@ -33,6 +33,15 @@ export const routes: Route[] = [
 		hide: true,
 	},
 	{
+		name: 'credentialRegistration',
+		path: '/settings/credential',
+		component: 'RegisterCredentials',
+		module: 'registration',
+		tagName: 'register-credentials',
+		hide: true,
+		protected: true,
+	},
+	{
 		name: 'settings',
 		path: '/settings',
 		component: 'Settings',

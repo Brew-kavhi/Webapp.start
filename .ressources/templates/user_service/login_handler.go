@@ -6,9 +6,16 @@ import (
 	"fmt"
 )
 
+type UsernameRequest struct {
+	Username string `json:"username"`
+}
+
 // Login endpoint
 func (userDB *UserDB) loginChallenge(w http.ResponseWriter, r *http.Request) {
-	username := r.URL.Query().Get("username")
+	decoder := json.NewDecoder(r.Body)
+	var t UsernameRequest
+	err := decoder.Decode(&t)
+	username := t.Username
 	
 	// Check if the user already exists in the database
 	user, err := userDB.GetUser(username)
@@ -17,6 +24,7 @@ func (userDB *UserDB) loginChallenge(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "User not found", http.StatusNotFound)
 		return
 	}
+	username = user.Email
 	
 	options, sessionData, err := webAuthn.BeginLogin(user)
 	if err != nil {
@@ -36,7 +44,6 @@ func (userDB *UserDB) login(w http.ResponseWriter, r *http.Request) {
 	// Retrieve the user from the database
 	user, err := userDB.GetUser(username)
 	if err != nil {
-		fmt.Println("try login challenge for user " + username)
 		http.Error(w, "user not found", http.StatusNotFound)
 		return
 	}
@@ -62,8 +69,8 @@ func (userDB *UserDB) login(w http.ResponseWriter, r *http.Request) {
 
 	//set  the token in a cookie to prevent XSS attacks on client
 	setJWTCookie(w, tokenString)
-
-	writeJSON(w, map[string]string{"status": "success"})
+	w.WriteHeader(http.StatusOK)
+	writeJSON(w, map[string]string{"ok": "true", "status": "success"})
 }
 
 // LoginUser authenticates the user with a password and returns a JWT token.

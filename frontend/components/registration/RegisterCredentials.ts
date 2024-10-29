@@ -12,10 +12,9 @@
 import { TemplatedComponent } from '/components/utils/TemplatedComponent.ts';
 import { registerUserBiometricCredentials } from '/js/pwa.ts';
 import { USER_API_HOST } from '/js/const/host.ts';
-import { User } from '/client_api/userModel';
-import templateHTML from '/components/registration/register.html';
+import templateHTML from '/components/registration/register-credentials.html';
 
-class Register extends TemplatedComponent {
+class RegisterCredentials extends TemplatedComponent {
 	constructor() {
 		super();
 	}
@@ -26,41 +25,16 @@ class Register extends TemplatedComponent {
 
 	render() {
 		this.shadowRoot.innerHTML = this.dynamicHTML(templateHTML);
-		this.addBootstrap();
-		let user = new User();
-		console.log(Object.keys(user));
 		this.shadowRoot.addEventListener('click', this);
-		this.shadowRoot.addEventListener('submit', this);
 	}
 
 	async handleEvent(e) {
 		if (e.target.id == 'registerButton') {
-			const username = this.shadowRoot.getElementById('username').value;
 			registerUserBiometricCredentials(
 				`${USER_API_HOST}/auth/register/challenge`,
 				`${USER_API_HOST}/auth/register`,
-				username
 			);
-		} else if (e.target.id == 'register-form' && e.type == 'submit') {
-			e.preventDefault();
-			const username = this.shadowRoot.getElementById('username').value;
-			const password = this.shadowRoot.getElementById('password').value;
-
-			// Send registration request
-			const response = await fetch(`${USER_API_HOST}/auth/register/password`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ username, password }),
-			});
-
-			if (response.ok) {
-				alert('User registered successfully!');
-			} else {
-				alert('Registration failed');
-			}
 		}
 	}
 }
-customElements.define('register-page', Register);
+customElements.define('register-credentials', RegisterCredentials);
