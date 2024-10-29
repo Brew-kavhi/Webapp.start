@@ -2,7 +2,7 @@
 
 import { coerceToArrayBuffer, coerceToBase64Url } from '/js/utils.js';
 
-//const registration = await navigator.serviceWorker.getRegistration();
+const registration = await navigator.serviceWorker.getRegistration();
 export function requestNotificationPermission() {
 	console.log(Notification.permission);
 	if ('Notification' in window) {
@@ -99,11 +99,11 @@ export function uploadCamera(
 export async function registerUserBiometricCredentials(
 	registerChallengeUrl: string = '/auth/register/challenge',
 	registerUrl: string = '/auth/register',
-	username: string = 'JohnDoe'
 ) {
 	// Request a registration challenge from the server
-	const response = await fetch(`${registerChallengeUrl}?username=${username}`, {
+	const response = await fetch(`${registerChallengeUrl}`, {
 		method: 'GET',
+		withCredentials: true,
 		headers: {
 			'Content-Type': 'application/json',
 		},
@@ -145,8 +145,9 @@ export async function registerUserBiometricCredentials(
 		};
 
 		// Send the registration data to the server
-		const registerResponse = await fetch(`${registerUrl}?username=${username}`, {
+		const registerResponse = await fetch(`${registerUrl}`, {
 			method: 'POST',
+			withCredentials: true,
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(credentialJSON),
 		});
@@ -164,7 +165,11 @@ export async function authenticateUserBiometricCredentials(
 	username: string
 ) {
 	// Request an authentication challenge from the server
-	const response = await fetch(`${loginChallengeUrl}?username=${username}`);
+	const response = await fetch(`${loginChallengeUrl}`, {
+		method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({username: username})
+	});
 	const options = await response.json();
 
 	const pkCred = options.publicKey;

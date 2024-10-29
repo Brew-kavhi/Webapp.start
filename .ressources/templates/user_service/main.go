@@ -50,8 +50,8 @@ RPOrigins:      []string{"https://homeserver:10001", "https://pwa.mariusgoehring
 	}
 
 	handler := http.NewServeMux()
-	handler.HandleFunc("/auth/register/challenge", userDB.registerChallenge)
-	handler.HandleFunc("/auth/register", userDB.register)
+	handler.Handle("/auth/register/challenge", checkAuthMiddleware(http.HandlerFunc(userDB.registerChallenge)))
+	handler.Handle("/auth/register", checkAuthMiddleware(http.HandlerFunc(userDB.register)))
 	handler.HandleFunc("/auth/register/password", userDB.registerPassword)
 	handler.HandleFunc("/auth/login/challenge", userDB.loginChallenge)
 	handler.HandleFunc("/auth/login", userDB.login)

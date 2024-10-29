@@ -4,18 +4,22 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 )
 
 func (userDB *UserDB) registerChallenge(w http.ResponseWriter, r *http.Request) {
-	username := r.URL.Query().Get("username")
-	
 	// Check if the user already exists in the database
-	user, err := userDB.GetUser(username)
+	userID := r.Context().Value("user_id")
+
+	// next decode the body into a userEdit object. 
+	userIDInt, _ := strconv.ParseUint(userID.(string), 10, 32)
+	user, err := userDB.GetUserById(uint(userIDInt))
 	if err != nil {
-		fmt.Println("Try register credentials for username" + username)
+		fmt.Println("Try register credentials for username" + user.Name)
 		http.Error(w, "User not found", http.StatusNotFound)
 		return
 	}
+	username := user.Email
 	options, sessionData, err := webAuthn.BeginRegistration(user)
 
 	if err != nil {
@@ -29,19 +33,23 @@ func (userDB *UserDB) registerChallenge(w http.ResponseWriter, r *http.Request) 
 }
 
 func (userDB *UserDB) register(w http.ResponseWriter, r *http.Request) {
-	username := r.URL.Query().Get("username")
+	userID := r.Context().Value("user_id")
 
-	// Retrieve the user from the database
-	user, err := userDB.GetUser(username)
+	// next decode the body into a userEdit object. 
+	userIDInt, _ := strconv.ParseUint(userID.(string), 10, 32)
+	user, err := userDB.GetUserById(uint(userIDInt))
+
 	if err != nil {
-		fmt.Println("Try register credentials for username" + username)
+		fmt.Println("Try register credentials for username")
 		http.Error(w, "User not found", http.StatusNotFound)
 		return
 	}
+	username := user.Email
 	
 	// Retrieve session data for this user
 	sessionData, exists := sessionDataStore[username]
 	if !exists {
+		fmt.Println("notexist")
 		http.Error(w, "Session data not found", http.StatusBadRequest)
 		return
 	}
