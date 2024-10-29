@@ -31,7 +31,7 @@ class Login extends TemplatedComponent {
 	}
 
 	async handleEvent(e) {
-		if (e.target.id == 'loginButton' && e.type == 'click') {
+		if (e.target.tagName =='SL-ICON' && e.type == 'click') {
 			e.stopPropagation();
 			e.preventDefault();
 			const username = this.shadowRoot.getElementById('username').value;
@@ -40,6 +40,11 @@ class Login extends TemplatedComponent {
 				`${USER_API_HOST}/auth/login`,
 				username
 			);
+			if (response.ok) {
+				window.router.loadUrl("/");
+			} else {
+				alert("login failed");
+			}
 		} else if (e.target.id == 'login-form' && e.type == 'submit') {
 			e.preventDefault();
 			const username = this.shadowRoot.getElementById('username').value;
