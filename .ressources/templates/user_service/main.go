@@ -62,7 +62,6 @@ RPOrigins:      []string{"https://homeserver:10001", "https://pwa.mariusgoehring
 	handler.Handle("/user/update", checkAuthMiddleware(http.HandlerFunc(userDB.updateUser)))
 	handler.Handle("/user/get", checkAuthMiddleware(http.HandlerFunc(userDB.getUser)))
 	handler.Handle("/auth/verify", checkAuthMiddleware(http.HandlerFunc(verify)))
-	handler.Handle("/user/edit", checkAuthMiddleware(http.HandlerFunc(userDB.editUser)))
 	handler.Handle("/user/delete", checkAuthMiddleware(http.HandlerFunc(userDB.deleteUser)))
 	handler.Handle("/user/change_password", checkAuthMiddleware(http.HandlerFunc(userDB.resetPasswordUsingCredentials)))
 
