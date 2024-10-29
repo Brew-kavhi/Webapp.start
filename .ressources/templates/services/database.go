@@ -44,3 +44,16 @@ func ({{MODULE}}DB *DBHandler) GetAll{{CAP_MODULE}}() (*[]{{CAP_MODULE}}, error)
 	return &{{MODULE}}s, nil
 	
 }
+
+func ({{MODULE}}DB *DBHandler) Create{{CAP_MODULE}}({{MODULE}} *{{CAP_MODULE}}) (error) {
+	return {{MODULE}}DB.DB.Create({{MODULE}}).Error
+}
+
+func ({{MODULE}}DB *DBHandler) Update{{CAP_MODULE}}({{MODULE}} *{{CAP_MODULE}}) (error) {
+	return {{MODULE}}DB.DB.Save(&{{MODULE}}).Error
+}
+
+
+func ({{MODULE}}DB *DBHandler) Delete{{CAP_MODULE}}({{MODULE}}Id uint) (error) {
+	return {{MODULE}}DB.DB.Delete(&{{CAP_MODULE}}{}, {{MODULE}}Id).Error
+}
