@@ -77,17 +77,6 @@ func (userDB *UserDB) registerNewUser(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (userDB *UserDB) editUser(w http.ResponseWriter, r *http.Request) {
-	// Function to edit a user. Here i need to retrieve the user from the cookie. also validate it.
-	userID := r.Context().Value("user_id")
-
-	// next decode the body into a userEdit object. 
-
-	// save the user
-	fmt.Printf("%v", userID)
-	w.WriteHeader(http.StatusOK)
-}
-
 func (userDB *UserDB) getUser(w http.ResponseWriter, r *http.Request) {
 	// Function to edit a user. Here i need to retrieve the user from the cookie. also validate it.
 	userID := r.Context().Value("user_id")
