@@ -50,7 +50,7 @@ func ({{MODULE}}DB *DBHandler) Create{{CAP_MODULE}}({{MODULE}} *{{CAP_MODULE}}) 
 }
 
 func ({{MODULE}}DB *DBHandler) Update{{CAP_MODULE}}({{MODULE}} *{{CAP_MODULE}}) (error) {
-	return {{MODULE}}DB.DB.Save(&{{MODULE}}).Error
+	return {{MODULE}}DB.DB.Model(&{{MODULE}}).Updates(&{{MODULE}}).Error
 }
 
 
