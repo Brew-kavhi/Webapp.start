@@ -104,7 +104,7 @@ export class Router {
 		const params = this._getParams(matchedRoute, urlSegments);
 
 		// Update the browser's URL
-		window.history.pushState({}, '', `/${urlSegments.join('/')}`);
+		window.history.pushState({}, '', `/${urlSegments.join('/')}${window.location.search}`);
 
 		// Create the component and pass the params if needed
 		import(
