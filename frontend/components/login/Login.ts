@@ -31,7 +31,7 @@ class Login extends TemplatedComponent {
 	}
 
 	async handleEvent(e) {
-		if (e.target.tagName =='SL-ICON' && e.type == 'click') {
+		if (e.target.tagName == 'SL-ICON' && e.type == 'click') {
 			e.stopPropagation();
 			e.preventDefault();
 			const username = this.shadowRoot.getElementById('username').value;
@@ -41,9 +41,9 @@ class Login extends TemplatedComponent {
 				username
 			);
 			if (response.ok) {
-				window.router.loadUrl("/");
+				window.router.loadUrl('/');
 			} else {
-				alert("login failed");
+				alert('login failed');
 			}
 		} else if (e.target.id == 'login-form' && e.type == 'submit') {
 			e.preventDefault();
