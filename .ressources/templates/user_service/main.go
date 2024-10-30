@@ -1,17 +1,21 @@
 package main
 
 import (
-	"github.com/rs/cors"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
+	"log" 
+	"strconv"
 
 	"github.com/go-webauthn/webauthn/webauthn"
+	"github.com/joho/godotenv"
+	"github.com/rs/cors"
 )
 
 var webAuthn *webauthn.WebAuthn
-var signingKey = []byte(os.Getenv("JWT_SECRET")) // Replace with a secure key
+var signingKey = []byte("") // Replace with a secure key
+var tokenDuration = uint(5) // token duration in minutes
 var userStore = map[string]*User{}
 var sessionDataStore = map[string]*webauthn.SessionData{} // Store session data temporarily
 
@@ -31,6 +35,16 @@ func writeJSON(w http.ResponseWriter, data interface{}) {
 }
 
 func main() {
+	envErr := godotenv.Load("../../.env")
+	if envErr != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	signingKey = []byte(os.Getenv("JWT_SECRET"))
+	var envTokenDuration, durationErr = strconv.ParseInt(os.Getenv("RESET_TOKEN_DURATION"), 10, 32)
+	if durationErr == nil {
+		tokenDuration = uint(envTokenDuration)
+	}
 	var err error
 	
 	//userDB := &UserDB{DB: db}

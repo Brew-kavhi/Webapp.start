@@ -78,6 +78,7 @@ generate-stubs:
 	go get gorm.io/driver/sqlite; \
 	go get github.com/rs/cors; \
 	go mod tidy; \
+	echo "go/api_$(module)_service.go" >> .openapi-generator-ignore; \
 	sed -e 's/{{MODULE}}/$(module)/g' \
 		-e 's/{{CAP_MODULE}}/$(CAPITALIZED_NAME)/g' \
 			../../.ressources/templates/services/database.go > go/$(module)DB.go; \
@@ -209,6 +210,7 @@ user-service:
 	go get -u gorm.io/gorm; \
 	go get golang.org/x/crypto/bcrypt; \
 	go get -u github.com/rs/cors; \
+	go get -u github.com/joho/godotenv; \
 	go get -u gorm.io/driver/sqlite; \
 	go get -u github.com/go-webauthn/webauthn; \
 	go get -u github.com/golang-jwt/jwt; \
@@ -231,6 +233,8 @@ create-service:
 		cd $(name) && go mod init $(name); \
 		echo "Installing GORM (GO object relation manager)"; \
 		go get -u gorm.io/gorm; \
+		echo "installing dotenv environment"; \
+		go get -u github.com/joho/godotenv; \
 		echo "Installing OpenAPI-codegen"; \
 		go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest; \
 		echo "Installing Kafka for event messaging"; \

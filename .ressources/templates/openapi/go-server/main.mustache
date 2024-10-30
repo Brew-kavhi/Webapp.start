@@ -4,13 +4,19 @@ package main
 import (
 	"log"
 	"net/http"
-	"github.com/rs/cors"
 	"os"
+	"github.com/rs/cors"
+	 "github.com/joho/godotenv"
 
 	{{packageName}} "{{gitHost}}/{{gitUserId}}/{{gitRepoId}}/{{sourceFolder}}"
 )
 
 func main() {
+	err := godotenv.Load('../../.env')
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	log.Printf("Server started")
 	dbHandler :=&{{packageName}}.DBHandler{}
 	dbHandler.InitConnection()
