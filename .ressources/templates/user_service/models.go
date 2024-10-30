@@ -4,7 +4,7 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"fmt"
-
+	"time"
 	"github.com/go-webauthn/webauthn/webauthn"
 )
 
@@ -29,6 +29,13 @@ type DBCredential struct {
 type PasswordCredentials struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
+}
+
+type PasswordResetToken struct {
+	ID uint `gorm:"autoIncrement,primaryKey"`
+	UserID uint `gorm:"not null"`
+	Token string `gorm:"not null"`
+	Expire time.Time
 }
 
 // Implement the Valuer interface for storing as JSON

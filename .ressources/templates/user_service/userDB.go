@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -16,6 +17,7 @@ type UserDB struct {
 
 func (userDB *UserDB) AutoMigrate() {
 	userDB.DB.AutoMigrate(&User{})
+	userDB.DB.AutoMigrate(&PasswordResetToken{})
 }
 
 func (userDB *UserDB) InitConnection() {
@@ -86,4 +88,24 @@ func (userDB *UserDB) DeleteUser(userID uint, password string) (error) {
 		return deleteErr
 	}
 	return nil	
+}
+
+func (userDB *UserDB) GetTokenForUser(userID uint) (PasswordResetToken, error) {
+	var token PasswordResetToken
+	fmt.Printf("%v", tokenDuration)
+	err := userDB.DB.Where("user_id = ?", userID).Last(&token).Error
+	fmt.Printf("%v", token)
+	return token, err
+}
+
+func (userDB *UserDB) StoreToken(userID uint, token string) (error) {
+	fmt.Printf("%v", tokenDuration)
+	var time = time.Now().Add(time.Minute * time.Duration(tokenDuration))
+	resetToken := &PasswordResetToken{
+		UserID: userID,
+		Token: token,
+		Expire: time,
+	}
+	createErr := userDB.DB.Create(&resetToken).Error
+	return createErr
 }
