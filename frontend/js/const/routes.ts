@@ -75,6 +75,24 @@ export const routes: Route[] = [
 		hide: true,
 		protected: true,
 	},
+	{
+		name: 'resetPassword',
+		path: '/resetpassword',
+		component: 'ResetPassword',
+		module: 'login',
+		tagName: 'reset-password',
+		hide: true,
+		protected: false,
+	},
+	{
+		name: 'validatePasswordToken',
+		path: '/validatepasswordtoken',
+		component: 'PasswordResetToken',
+		module: 'login',
+		tagName: 'reset-token',
+		hide: true,
+		protected: false,
+	},
 ]; // Default links if none are provided.
 
 export const examplecoffee = {
