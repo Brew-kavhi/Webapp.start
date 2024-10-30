@@ -32,7 +32,7 @@ class RegisterCredentials extends TemplatedComponent {
 		if (e.target.id == 'registerButton') {
 			registerUserBiometricCredentials(
 				`${USER_API_HOST}/auth/register/challenge`,
-				`${USER_API_HOST}/auth/register`,
+				`${USER_API_HOST}/auth/register`
 			);
 		}
 	}

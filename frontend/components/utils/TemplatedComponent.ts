@@ -35,9 +35,7 @@ export class TemplatedComponent extends HTMLElement {
 		);
 	}
 	dynamicHTML(html: string) {
-		return html.replace(/\${(.*?)}/g, (x, g) =>
-			getValueByPath(this, g)
-		);
+		return html.replace(/\${(.*?)}/g, (x, g) => getValueByPath(this, g));
 	}
 }
 function getValueByPath(obj: any, path: string): any {

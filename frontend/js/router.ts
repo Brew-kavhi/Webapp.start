@@ -95,7 +95,6 @@ export class Router {
 		this.loadRoute(...pathSegments);
 	}
 	_redirectToLogin() {
-		console.log('login');
 		window.history.pushState({}, '', '/login');
 		document.getElementsByTagName('app-component')[0].login();
 	}
