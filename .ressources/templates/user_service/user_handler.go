@@ -153,19 +153,74 @@ func (userDB *UserDB) deleteUser(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func resetPassword(w http.ResponseWriter, r *http.Request) {
+func (userDB *UserDB) resetPassword(w http.ResponseWriter, r *http.Request) {
 	// Function to reset a users password. If there is a credential stored for this user, prin a hint. that the user can just sign in using his credentials. Otherwise send a link for resetting.
 	// get user by email.
+	var req UsernameRequest
+		
+	// Decode the request body
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		return
+	}
+	user, err := userDB.GetUser(req.Username)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	token, tokenErr := GenerateResetToken()
+	if tokenErr != nil {
+		http.Error(w, "Failed to generate reset token", http.StatusInternalServerError)
+		return
+	}
+	storeErr := userDB.StoreToken(user.ID, token)
+	if storeErr != nil {
+		http.Error(w, "Failed to store reset token", http.StatusInternalServerError)
+		return
+	}
 
-	// check if the user has credentials assigned.
-	// If so, return a text saying, that the user can also login using his credential device and ignore the email
-
-	// send an email to reset the password
-
-	// send success response
+	mailErr := SendEmailWithOAuth2(user.Email, token)
+	if mailErr != nil {
+		fmt.Printf("%v", mailErr)
+		http.Error(w, "Failed to send mail", http.StatusInternalServerError)
+		return
+	}
+	
 	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Password reset link has been sent"))
 }
 
+func (userDB *UserDB) validatePasswordToken(w http.ResponseWriter, r *http.Request) {
+	token := r.URL.Query().Get("token")
+
+	var req PasswordCredentials
+		
+	// Decode the request body
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		return
+	}
+	user, err := userDB.GetUser(req.Username)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	storedToken, err := userDB.GetTokenForUser(user.ID)
+	valid, err := VerifyResetToken(storedToken, token)
+	if err != nil || !valid {
+		fmt.Printf("%v", err)
+		http.Error(w, "Invalid token", http.StatusUnauthorized)
+		return
+	}
+	hashedPassword, err := HashPassword(req.Password)
+	user.PasswordHash = hashedPassword
+	userDB.DB.Save(user)
+	// then set password
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Password reset link has been sent"))
+
+}
 
 func (userDB *UserDB) resetPasswordUsingCredentials(w http.ResponseWriter, r *http.Request) {
 	// Function to reset a users password if user is logged in. This is for hte case that the user has credentials saved and the cookie is valid. then just reset the password in DB here.

@@ -1,11 +1,18 @@
 package main
 
 import (
+	"bytes"
 	"time"
+	"os"
+	"crypto/rand"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"strconv"
 	"net/http"
+	"net/smtp"
+
+	"strings"
 	"github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -19,6 +26,80 @@ func HashPassword(password string) (string, error) {
 // CheckPassword compares a hashed password with a plain password.
 func CheckPassword(hashedPassword, password string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+}
+
+// GenerateResetToken creates a secure token for password reset
+func GenerateResetToken() (string, error) {
+    b := make([]byte, 32) // 256-bit token
+    _, err := rand.Read(b)
+    if err != nil {
+        return "", err
+    }
+    return base64.URLEncoding.EncodeToString(b), nil
+}
+
+// OAuth2Auth structure to hold authentication details
+type OAuth2Auth struct {
+	username, accessToken string
+}
+
+// NewOAuth2Auth creates a new OAuth2Auth instance
+func NewOAuth2Auth(username, accessToken string) *OAuth2Auth {
+	return &OAuth2Auth{username, accessToken}
+}
+
+// Start starts the authentication process for OAuth2
+func (a *OAuth2Auth) Start(server *smtp.ServerInfo) (string, []byte, error) {
+	if server.Name == "" {
+		return "", nil, fmt.Errorf("SMTP server name required")
+	}
+	return "XOAUTH2", []byte("user=" + a.username + "\x01auth=Bearer " + a.accessToken + "\x01\x01"), nil
+}
+
+// Next is required to implement the Auth interface but is unused for OAuth2
+func (a *OAuth2Auth) Next(fromServer []byte, more bool) ([]byte, error) {
+	return nil, nil
+}
+
+// SendEmailWithOAuth2 uses net/smtp with OAuth2 authentication
+func SendEmailWithOAuth2(to string, token string) error {
+	port, err := strconv.ParseInt(os.Getenv("EMAIL_PORT"), 10, 32)
+	if err != nil {
+		fmt.Println("faliyre port")
+		return err
+	}
+	smtpServer := os.Getenv("EMAIL_SMTP")
+	smtpPort := int(port)
+	from :=  os.Getenv("EMAIL_USER")
+	subject := "Reset your password"
+	body :="Hello,\nyou requested to reset your password. Click on <a href='" + os.Getenv("APP_URL") + "validatepasswordtoken?token=" + token + "&email=" + to +"'>this link</a> if it was you. Otherwise nothing more has to be done."
+	accessToken := os.Getenv("EMAIL_PASSWORD")
+	auth := NewOAuth2Auth(from, accessToken)
+	fmt.Println(body)
+
+	// Set up email message
+	msg := bytes.Buffer{}
+	msg.WriteString(fmt.Sprintf("From: %s\r\n", from))
+	msg.WriteString(fmt.Sprintf("To: %s\r\n", to))
+	msg.WriteString(fmt.Sprintf("Subject: %s\r\n", subject))
+	msg.WriteString("MIME-Version: 1.0\r\n")
+	msg.WriteString("Content-Type: text/plain; charset=\"utf-8\"\r\n")
+	msg.WriteString("\r\n")
+	msg.WriteString(body)
+
+	// Connect to the SMTP server and send the email
+	addr := fmt.Sprintf("%s:%d", smtpServer, smtpPort)
+	return smtp.SendMail(addr, auth, from, strings.Split(to, ","), msg.Bytes())
+}
+
+func VerifyResetToken(storedToken PasswordResetToken, token string) (bool, error) {
+	if time.Now().After(storedToken.Expire){
+		return false, errors.New("expired reset token")
+	}
+	if token != storedToken.Token {
+		return false, errors.New("invalid or expired reset token")
+	}
+	return true, nil
 }
 
 func GenerateJWT(user User) (string, error) {
