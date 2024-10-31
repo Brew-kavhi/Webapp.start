@@ -67,6 +67,14 @@ export const routes: Route[] = [
 		hide: true,
 	},
 	{
+		name: 'TOTPVerfication',
+		path: '/totp-verification',
+		component: 'TOTPVerification',
+		module: 'login',
+		tagName: 'totp-verification',
+		hide: true,
+	},
+	{
 		name: 'logout',
 		path: '/logout',
 		component: 'Logout',

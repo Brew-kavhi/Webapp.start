@@ -1,5 +1,5 @@
 <template id="edit-profile-template">
-	<div class="bg-light p-5 rounded w-50 m-auto">
+	<div>
 		<h1 class="mb-4 text-center">Edit Profile</h1>
 		<div class="text-center" id="message"></div>
 		<div class="mb-3">
@@ -9,7 +9,10 @@
 					<div class="col form-group mb-3" slot-name="lastName"></div>
 				</div>
 				<div class="form-group mb-3" slot-name="email"></div>
-				<button class="btn btn-primary" type="submit">Save</button>
+				<button class="d-flex align-items-center btn btn-primary" type="submit">
+					<sl-icon class='fs-2' name="check"></sl-icon>
+					Save
+				</button>
 			</form>
 		</div>
 	</div>
@@ -18,3 +21,22 @@
 		@import url('/node_modules/bootstrap/dist/css/bootstrap.min.css');
 	</style>
 </template>
+
+<div id="container" class="bg-light p-5 rounded w-50 m-auto">
+	<button id="secondfactor" class="d-none m-auto mb-5 btn btn-primary">Enable Two factor Authentication for your account</button>
+	<div id='secondfactorenabled' class='d-none rounded-3 d-flex justify-content-between align-items-center border border-success-subtle'>
+		<p class="align-items-center d-flex m-0 ms-2">
+			<sl-icon class="fs-2 text-success" name="check"></sl-icon>Hurray, You have two factor authentication enabled.
+		</p>
+		<button class="btn btn-danger d-flex align-items-center m-2" id="disable2fa">
+			<sl-icon name="x-lg" class='fs-5 me-2'></sl-icon>
+			Disable 2FA
+		</button>
+	</div>
+	<div id="qrcode"></div>
+</div>
+<password-dialog></password-dialog>
+	<style>
+		@import url('/css/main.css');
+		@import url('/node_modules/bootstrap/dist/css/bootstrap.min.css');
+	</style>
