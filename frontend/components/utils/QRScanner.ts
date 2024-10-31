@@ -51,7 +51,6 @@ class QrScanner extends HTMLElement {
 
 		if (this.html5QrCode) {
 			try {
-				alert("huier");
 				await this.html5QrCode.start(
 					{ facingMode: 'environment' },
 					{ fps: 10, qrbox: 250 },
@@ -86,7 +85,6 @@ class QrScanner extends HTMLElement {
 	}
 
 	onScanSuccess(decodedText: string) {
-		alert(decodedText);
 		const event = new CustomEvent('qr-scan-success', {
 			detail: { decodedText },
 		});

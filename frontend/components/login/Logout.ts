@@ -35,10 +35,11 @@ class Logout extends HTMLElement {
 		if (response.ok) {
 			// Successfully logged out
 			// Redirect to the login page or remove the protected content
+			toast.success("Success", "You are logged out now");
 			window.router.loadRoute('login');
 		} else {
 			// Handle error (e.g., user already logged out, or server error)
-			alert('Failed to log out. Please try again.');
+			toast.error("Error", "Logout failed");
 		}
 	}
 }

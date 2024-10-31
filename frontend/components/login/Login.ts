@@ -43,7 +43,7 @@ class Login extends TemplatedComponent {
 			if (response.ok) {
 				window.router.loadUrl('/');
 			} else {
-				alert('login failed');
+				toast.error("Error", "Login failed");
 			}
 		} else if (e.target.id == 'login-form' && e.type == 'submit') {
 			e.preventDefault();
@@ -62,12 +62,18 @@ class Login extends TemplatedComponent {
 			if (response.ok) {
 				if (response.redirected) {
 					const redirectUrl = response.url;
-					window.router.loadUrl(redirectUrl.replace(window.location.origin,''));
+					toast.success("Login succesfull", "You are redirected");
+					router.loadUrl(redirectUrl.replace(window.location.origin,''));
 				} else {
-					window.location.href='/';
+					toast.success("Success", "Login succesfull");
+					router.loadUrl("/");
 				}
 			} else {
-				alert('Login failed');
+				if (response.status == 404) {
+					toast.error("Login failed", "We cannot find this username");
+				} else {
+					toast.error("Error", "Login failed");
+				}
 			}
 		}
 	}

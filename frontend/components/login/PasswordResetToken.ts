@@ -71,13 +71,14 @@ export class PasswordResetToken extends TemplatedComponent {
 				body: JSON.stringify({ username: email, password: password }),
 			}).then((response) =>{
 				if (response.status == 200) {
+					toast.success("Success", "Successful validation");
 					console.log(response);
 				} else if(response.status == 404) {
 					// email is worong
-					alert("something went wrong, check if you are on the right crednetial");
+					toast.error("Error", "Something went wrong, check if you entered the right credential");
 				} else if(response.status == 401) {
 					// invalid token
-					alert("the token is not valid");
+					toast.error("Error", "the token is not valid");
 				}
 			}).catch((error) =>{});
 		}

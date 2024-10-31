@@ -45,12 +45,14 @@ export class ResetPassword extends TemplatedComponent {
 			console.log(response);
 
 			if (response.ok) {
+				toast.success("Success", "Password reset");
 				window.location.href = '/';
 			} else {
 				if (response.status == 404) {
+					toast.error("Error", "Sorry, we cannot find a user with this email.");
 					this.shadowRoot.querySelector('#error-message').innerHTML="Error";
 				} else {
-				alert('Login failed');
+					toast.error("Error", "Password reset did not work");
 				}
 			}
 		}
