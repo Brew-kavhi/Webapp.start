@@ -60,8 +60,12 @@ class Login extends TemplatedComponent {
 			});
 
 			if (response.ok) {
-				window.location.href = '/';
-				//document.getElementsByTagName('auth-check')[0].render();
+				if (response.redirected) {
+					const redirectUrl = response.url;
+					window.router.loadUrl(redirectUrl.replace(window.location.origin,''));
+				} else {
+					window.location.href='/';
+				}
 			} else {
 				alert('Login failed');
 			}
