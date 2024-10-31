@@ -15,6 +15,7 @@ import (
 	"strings"
 	"github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/bcrypt"
+	"github.com/pquerna/otp/totp"
 )
 
 // HashPassword hashes a plain password using bcrypt.
@@ -101,6 +102,20 @@ func VerifyResetToken(storedToken PasswordResetToken, token string) (bool, error
 	}
 	return true, nil
 }
+func GenerateTOTPSecret(user *User) (string, string, error) {
+	secret, err := totp.Generate(totp.GenerateOpts{
+		Issuer: "PWA.MARIUSFGOEHRIN.de", //os.Getenv("APP_URL"),
+		AccountName: user.Email,
+	})
+	if err != nil {
+		return "", "", err
+	}
+	return secret.Secret(), secret.URL(), nil
+}
+
+func VerifyTOTPCode(secret, code string) bool {
+	return totp.Validate(code, secret)
+}
 
 func GenerateJWT(user User) (string, error) {
 	// Create JWT token
@@ -115,6 +130,51 @@ func GenerateJWT(user User) (string, error) {
 		return "", err
 	}
 	return tokenString, nil
+}
+
+func Generate2FAToken(user User) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"userID": fmt.Sprintf("%d",user.ID),
+		"exp":    time.Now().Add(5 * time.Minute).Unix(),
+	})
+
+	// Sign the token with the secret key
+	tokenString, err := token.SignedString(signingKey)
+	if err != nil {
+		return "", fmt.Errorf("failed to sign token: %v", err)
+	}
+	return tokenString, nil
+}
+
+// Validate the temporary auth token and extract the userID
+func ValidateTempAuthToken(tokenString string) (uint, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		// Ensure that the token's signing method is HMAC and matches our secret
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return signingKey, nil
+	})
+	if err != nil {
+		return uint(0), fmt.Errorf("failed to parse token: %v", err)
+	}
+	
+	// Validate token claims and retrieve the userID
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		_userID, ok := claims["userID"].(string)
+		if !ok {
+			fmt.Println( ok)
+			return uint(0), fmt.Errorf("userID not found in token claims")
+		}
+		userID64, err := strconv.ParseUint(_userID, 10, 32)
+		if err != nil {
+			fmt.Println(err)
+			return uint(0), err
+		}
+		userID := uint(userID64)
+		return userID, nil
+	}
+	return uint(0), fmt.Errorf("invalid token or claims")
 }
 
 func validateCookie(cookie *http.Cookie) (uint, error) {
@@ -148,6 +208,18 @@ func validateCookie(cookie *http.Cookie) (uint, error) {
 		}
 	}
 	return userID, nil
+}
+
+func Set2FACookie(w http.ResponseWriter, token string) {
+	http.SetCookie(w, &http.Cookie{
+	    Name:     "auth_phase_token",
+		Expires: time.Now().Add(5* time.Minute),
+	    Value:    token,
+	    HttpOnly: true,  // Prevent access from JavaScript
+	    Secure:   true,  // Only send over HTTPS
+	    Path:     "/",   // Available to the entire site
+	    SameSite: http.SameSiteStrictMode,  // CSRF protection
+	})
 }
 
 func setJWTCookie(w http.ResponseWriter, tokenString string) {

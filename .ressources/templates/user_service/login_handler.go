@@ -10,6 +10,10 @@ type UsernameRequest struct {
 	Username string `json:"username"`
 }
 
+type TOTPRequest struct {
+	Code string `json:"totp_code"`
+}
+
 // Login endpoint
 func (userDB *UserDB) loginChallenge(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
@@ -97,17 +101,72 @@ func (userDB *UserDB) loginPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Generate a JWT token for the user
-	token, err := GenerateJWT(*user)
+	if !user.Enable2FA {
+		// Generate a JWT token for the user
+		token, err := GenerateJWT(*user)
+		if err != nil {
+			http.Error(w, "Error generating token", http.StatusInternalServerError)
+			return
+		}
+
+		// Return the token in the response
+		setJWTCookie(w, token)
+
+	} else {
+		// generate a intermediate cookie, taht stores the user id and expires in10 minutes and send a redirect 
+		token, err := Generate2FAToken(*user)
+		if err != nil {
+			http.Error(w, "Error generating token", http.StatusInternalServerError)
+			return
+		}
+		fmt.Println("setting 2fa token")
+		Set2FACookie(w, token)
+		http.Redirect(w,r,"/totp-verification", http.StatusSeeOther)
+		return
+	}
+	writeJSON(w, map[string]string{"status": "success"})
+}
+
+func (userDB *UserDB) ValidateTOTPLogin(w http.ResponseWriter, r *http.Request) {
+	var token TOTPRequest
+	err := json.NewDecoder(r.Body).Decode(&token)
+	authToken, err := r.Cookie("auth_phase_token")
 	if err != nil {
-		http.Error(w, "Error generating token", http.StatusInternalServerError)
+		fmt.Println(err)
+		http.Error(w, "Error getting cookie", http.StatusUnauthorized)
+		return
+	}
+	userID, err :=ValidateTempAuthToken(authToken.Value)
+	fmt.Println(userID)
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, "Unauthorized access", http.StatusUnauthorized)
 		return
 	}
 
-	// Return the token in the response
-	setJWTCookie(w, token)
+	// validate
+	fmt.Println("validating the token")
+	valid, err := userDB.Validate2FA(userID, token.Code)
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, "Error validating", http.StatusInternalServerError)
+		return
+	}
+	if valid {
+		user, _ := userDB.GetUserById(userID)
+		// Generate a JWT token for the user
+		token, err := GenerateJWT(*user)
+		if err != nil {
+			http.Error(w, "Error generating token", http.StatusInternalServerError)
+			return
+		}
 
-	writeJSON(w, map[string]string{"status": "success"})
+		// Return the token in the response
+		setJWTCookie(w, token)
+		writeJSON(w, map[string]string{"status": "success"})
+		return
+	}
+	w.WriteHeader(http.StatusUnauthorized)
 }
 
 func logout(w http.ResponseWriter, r *http.Request) {

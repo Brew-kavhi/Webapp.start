@@ -19,6 +19,8 @@ type User struct {
 	Credentials       DBCredentialSlice `gorm:"type:json"`
 	Email    string `gorm:"uniqueIndex"`
 	PasswordHash string
+	Enable2FA bool `gorm:"default:false"`
+	SecondFactor string
 }
 
 // DBCredential is a wrapper around webauthn.Credential
