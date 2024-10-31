@@ -44,7 +44,6 @@ class DeleteUser extends TemplatedComponent {
 
 	async handleEvent(e) {
 		if (e.target.id == 'delete_profile') {
-			// TODO: replace prompt with password hidden dialog
 			const passwordDialog = this.shadowRoot.querySelector('password-dialog');
 			if (passwordDialog) {
 				passwordDialog.setText('Confirm deletion by entering your password below');
