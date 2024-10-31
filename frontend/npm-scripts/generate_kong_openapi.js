@@ -19,6 +19,14 @@ let mergedOpenApi = {
 let kongConfig = {
 	_format_version: '2.1',
 	services: [],
+	consumers:[
+        {
+            username: "Frontend",
+            jwt_secrets: [{
+                key: "frontend_jwt_token_key",
+                secret: process.env.JWT_SECRET
+            }]
+       }]
 };
 
 // Function to merge components
@@ -77,6 +85,7 @@ const processOpenApiFile = (filePath) => {
 				name: serviceName,
 				paths: [`/api/${tag}`],
 				strip_path: true,
+				plugins: [{name:'jwt', config:{cookie_names:['jwt']}}]
 			});
 			hostNames.push({
 				name: `${tag}_API_HOST`,

@@ -36,5 +36,7 @@ func main() {
 	})
 	router := {{packageName}}.NewRouter({{#apiInfo}}{{#apis}}{{classname}}Controller{{^-last}}, {{/-last}}{{/apis}}{{/apiInfo}})
 
-	log.Fatal(http.ListenAndServe(":{{serverPort}}", secureHeadersMiddleware(checkAuthMiddleware(c.Handler(router)))))
+	// Add checkAuthMiddleware if you need to: get the userid from the jwt token
+	// authentication is handled by kong api gateway
+	log.Fatal(http.ListenAndServe(":{{serverPort}}", secureHeadersMiddleware(c.Handler(router))))
 }
