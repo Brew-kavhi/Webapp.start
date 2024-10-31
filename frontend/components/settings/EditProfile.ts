@@ -23,6 +23,7 @@ class EditProfile extends TemplatedComponent {
 	private userAPI: UserAPI;
 	private form: FormComponent;
 	private fields: Array<FieldScheme>;
+	private user: User;
 
 	constructor() {
 		super();
@@ -53,10 +54,32 @@ class EditProfile extends TemplatedComponent {
 				required: true,
 			},
 		];
+		document.addEventListener('password-submitted', this);
 	}
 
 	connectedCallback() {
 		this.render();
+	}
+
+	disableTwoFA(e) {
+	}
+
+	renderTwoFactorOption() {
+		if (!this.user) {
+			return;
+		}
+		if (!this.user['2faenabled']) {
+			const button = this.shadowRoot.getElementById('secondfactor');
+			if (button) {
+				button.classList.remove('d-none');
+			}
+		} else {
+			const secondFactorEnabled = this.shadowRoot.getElementById('secondfactorenabled');
+			if (secondFactorEnabled) {
+				secondFactorEnabled.classList.remove('d-none');
+			}
+		}
+
 	}
 
 	render() {
@@ -64,7 +87,9 @@ class EditProfile extends TemplatedComponent {
 			.getUser()
 			.then((response) => {
 				if (response.data) {
+					this.user = response.data as User;
 					this.form.setValues(response.data);
+					this.renderTwoFactorOption();
 				} else {
 					console.log('error in getting user data');
 					console.log(response);
@@ -73,29 +98,80 @@ class EditProfile extends TemplatedComponent {
 			.catch((error) => {
 				console.log(error);
 			});
+
 		this.shadowRoot.innerHTML = this.dynamicHTML(templateHTML);
+		const button = this.shadowRoot.getElementById("secondfactor");
+		let template = this.shadowRoot?.getElementById('edit-profile-template');
+		
 		this.form = document.createElement('form-component') as FormComponent;
 		this.form.setFields(this.fields);
-		this.shadowRoot.appendChild(this.form);
-		let template = this.shadowRoot?.getElementById('edit-profile-template');
+
+		this.shadowRoot.getElementById("container").insertBefore(this.form, button);
 		this.form.setHTML(template.innerHTML);
 		this.form.setDataScheme(User);
+
 		this.shadowRoot.addEventListener('form-submitted', this);
 		this.shadowRoot.addEventListener('form-submitted', this);
+
+		this.shadowRoot.getElementById("secondfactor").addEventListener("click", this);
+		this.shadowRoot.getElementById("disable2fa").addEventListener("click", this);
+		this.renderTwoFactorOption();
 	}
 
 	handleEvent(e) {
-		var user = e.detail;
-		console.log(user);
-		// store user in the backend
-		this.userAPI
-			.updateUser(user)
-			.then((response) => {
-				alert('success');
-			})
-			.catch((error) => {
-				console.log(error);
+		if (e.target.id == 'disable2fa' && e.type == 'click') {
+			const passwordDialog = this.shadowRoot.querySelector('password-dialog');
+			if (passwordDialog) {
+				passwordDialog.setText('Confirm action by entering your password below. Please note, that disabling two factor authentication is not recommended, as it weakens the security of your account.');
+				passwordDialog.openDialog(); // Open the dialog via the method
+			}
+
+			return;
+		} else if (e.type == 'password-submitted') {
+			const { password } = e.detail;
+			if (password == null || password == '') {
+				alert('We are very happy ypu are staying with us');
+			} else {
+				e.preventDefault();
+				this.userAPI
+					.disableTwoFA({ password: password })
+					.then((response) => {
+						this.renderTwoFactorOption();
+					})
+					.catch((error) => {
+						console.log(error);
+					});
+			}
+			return;
+		} else if (e.type=='click' && e.target.id=='secondfactor') {
+			fetch(`${USER_API_HOST}/user/secondfactor`, {
+				withCredentials: true
+			}).then((response) =>{
+				response.json().then((data) => {
+					const qrcode = new QRCode(this.shadowRoot.getElementById('qrcode'), {
+					  text: data['url'],
+					  width: 512, 
+					  height: 512, 
+					  colorDark : '#000',
+					  colorLight : '#fff',
+					  correctLevel : QRCode.CorrectLevel.H
+					});
+				});
 			});
+			return;
+		} else if (e.type == 'form-submitted') {
+			var user = e.detail;
+			// store user in the backend
+			this.userAPI
+				.updateUser(user)
+				.then((response) => {
+					this.render();
+					//alert('success');
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		}
 	}
 }
 customElements.define('edit-profile', EditProfile);
