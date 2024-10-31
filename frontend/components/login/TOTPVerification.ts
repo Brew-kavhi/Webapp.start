@@ -52,13 +52,15 @@ class TOTPVerification extends TemplatedComponent {
 			if (response.ok) {
 				console.log(response);
 				if (response.redirected) {
+					toast.success("Success", "Verfication was successful.");
 					const redirectUrl = response.url;
 					window.router.loadUrl(redirectUrl.replace(window.location.origin,''));
 				} else {
+					toast.success("Success", "Verfication was successful.");
 					window.location.href='/';
 				}
 			} else {
-				alert('Login failed');
+				toast.error('Error', 'Login failed. Please try again');
 			}
 		}
 	}

@@ -54,7 +54,7 @@ export async function share(
 			console.error('Error sharing content:', error);
 		}
 	} else {
-		alert('Web Share API not supported in this browser.');
+		toast.error('Web Share API not supported in this browser.');
 	}
 }
 

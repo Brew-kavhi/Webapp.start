@@ -52,14 +52,16 @@ class DeleteUser extends TemplatedComponent {
 		} else if (e.type == 'password-submitted') {
 			const { password } = e.detail;
 			if (password == null || password == '') {
-				alert('We are very happy ypu are staying with us');
+				toast.success("Success", "We are happy you are staying with us!");
 			} else {
 				this.userAPI
 					.deleteUser({ password: password })
 					.then((response) => {
+						toast.success("Success", "Your account has been deleted!");
 						console.log(response);
 					})
 					.catch((error) => {
+						toast.error("Error", error);
 						console.log(error);
 					});
 			}

@@ -29,6 +29,10 @@ Content loading
 		window.router = router;
 		// Register the service-worker
 		window.addEventListener('load', () => {
+			const toast = document.getElementById("toast");
+			if (toast) {
+				window.toast = toast;
+			}
 			// Initialize router
 			navigator.serviceWorker.register('/js/service-worker.js').then(
 				(registration) => {

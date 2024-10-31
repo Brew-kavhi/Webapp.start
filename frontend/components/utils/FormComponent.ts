@@ -111,7 +111,7 @@ export class FormComponent extends HTMLElement {
 		});
 		[valid, msg] = this.formValidation(values);
 		if (!valid) {
-			alert(msg);
+			toast.warning("Form invalid", msg);
 		}
 		return inputsValid;
 	}
@@ -120,7 +120,6 @@ export class FormComponent extends HTMLElement {
 		e.preventDefault();
 		// validate all inputs fields
 		if (!this.validateInputs()) {
-			alert('error');
 			return;
 		}
 		//

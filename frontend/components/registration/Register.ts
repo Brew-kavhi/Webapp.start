@@ -84,13 +84,15 @@ class Register extends TemplatedComponent {
 				.createUser(user)
 				.then((response) => {
 					if (response.status == 201) {
-						alert('user successfully registered');
+						toast.success('Success', 'Your registration was successful. We are happy you join our team!');
 						window.location.href = '/';
 					}
 				})
 				.catch((error) => {
 					if (error.status == 404) {
-						alert('user with this email alreadyexists');
+						toast.error('Error','A user with this email already exists!');
+					} else {
+						toast.error("Error", "Something went wrong. We are very sorry!");
 					}
 					console.log(error);
 				});

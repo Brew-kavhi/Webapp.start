@@ -130,15 +130,17 @@ class EditProfile extends TemplatedComponent {
 		} else if (e.type == 'password-submitted') {
 			const { password } = e.detail;
 			if (password == null || password == '') {
-				alert('We are very happy ypu are staying with us');
+				toast.success("cancelled", "Good choice keeping the two factor authentication enabled!");
 			} else {
 				e.preventDefault();
 				this.userAPI
 					.disableTwoFA({ password: password })
 					.then((response) => {
+						tosat.success('success', "Successfully updated your profile");
 						this.renderTwoFactorOption();
 					})
 					.catch((error) => {
+						toast.error("Error", "There was an error during the update");
 						console.log(error);
 					});
 			}
@@ -166,9 +168,10 @@ class EditProfile extends TemplatedComponent {
 				.updateUser(user)
 				.then((response) => {
 					this.render();
-					//alert('success');
+					tosat.success('success', "Successfully updated your profile");
 				})
 				.catch((error) => {
+					toast.error("Error", "There was an error during the update");
 					console.log(error);
 				});
 		}
