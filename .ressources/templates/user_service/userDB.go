@@ -109,3 +109,17 @@ func (userDB *UserDB) StoreToken(userID uint, token string) (error) {
 	createErr := userDB.DB.Create(&resetToken).Error
 	return createErr
 }
+
+func (userDB *UserDB) Validate2FA(userID uint, code string) (bool, error){
+	user, err := userDB.GetUserById(userID)
+	if err != nil {
+		fmt.Println(err)
+		return false, err
+	}
+	if user.Enable2FA {
+		// validate the token
+		return VerifyTOTPCode(user.SecondFactor, code), nil
+	} else {
+		return true, nil
+	}
+}

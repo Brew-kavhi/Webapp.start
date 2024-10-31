@@ -26,10 +26,15 @@ type DeleteUserRequest struct {
 	Password string `json:"password"`
 }
 
+type DisableTwoFARequest struct {
+	Password string `json:"password"`
+}
+
 type GetUserResponse struct {
 	Name string `json:"name"`
 	LastName string `json:"lastName"`
 	Email    string `json:"email"`
+	Enable2FA bool `json:"2faenabled"`
 }
 
 func (userDB *UserDB) registerNewUser(w http.ResponseWriter, r *http.Request) {
@@ -93,6 +98,7 @@ func (userDB *UserDB) getUser(w http.ResponseWriter, r *http.Request) {
 		Name: user.Name,
 		LastName : user.LastName,
 		Email: user.Email,
+		Enable2FA: user.Enable2FA,
 	}
 
 	// Set header to application/json and encode the response as JSON
@@ -235,4 +241,69 @@ func (userDB *UserDB) resetPasswordUsingCredentials(w http.ResponseWriter, r *ht
 
 	// return a success response
 
+}
+
+func (userDB *UserDB) Enable2FAForUser(w http.ResponseWriter, r *http.Request) {
+	// get user id from cookie
+	userID := r.Context().Value("user_id")
+
+	// next get user from id
+	userIDInt, _ := strconv.ParseUint(userID.(string), 10, 32)
+	user, err := userDB.GetUserById(uint(userIDInt))
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+	// generate the token
+	secret, url, err := GenerateTOTPSecret(user)
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, "Error generating second factor", http.StatusInternalServerError)
+		return
+	}
+
+	// store the secret in the database
+	user.SecondFactor = secret
+	user.Enable2FA = true
+	userDB.DB.Save(user)
+
+	w.WriteHeader(http.StatusCreated)
+	writeJSON(w, map[string]string{"url": url})
+}
+
+func (userDB *UserDB) Disable2FAForUser(w http.ResponseWriter, r *http.Request) {
+	var req DisableTwoFARequest
+		
+	// Decode the request body
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		return
+	}
+	// get user id from cookie
+	userID := r.Context().Value("user_id")
+
+	// next get user from id
+	userIDInt, _ := strconv.ParseUint(userID.(string), 10, 32)
+	user, err := userDB.GetUserById(uint(userIDInt))
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+
+	// checkPasswords
+	passwordErr := CheckPassword(user.PasswordHash, req.Password)
+	if passwordErr != nil {
+		http.Error(w, "Wrong password", http.StatusUnauthorized)
+		return
+	}
+
+	// update the user
+	user.SecondFactor = ""
+	user.Enable2FA = false
+	userDB.DB.Save(user)
+
+	w.WriteHeader(http.StatusOK)
+	writeJSON(w, map[string]string{"status": "success"})
 }

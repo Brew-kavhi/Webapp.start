@@ -210,6 +210,7 @@ user-service:
 	go get -u gorm.io/gorm; \
 	go get golang.org/x/crypto/bcrypt; \
 	go get -u github.com/rs/cors; \
+	go get -u github.com/pquerna/otp/totp; \
 	go get -u github.com/joho/godotenv; \
 	go get -u gorm.io/driver/sqlite; \
 	go get -u github.com/go-webauthn/webauthn; \
