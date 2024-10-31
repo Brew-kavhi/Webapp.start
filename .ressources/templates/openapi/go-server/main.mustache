@@ -11,11 +11,14 @@ import (
 	{{packageName}} "{{gitHost}}/{{gitUserId}}/{{gitRepoId}}/{{sourceFolder}}"
 )
 
+var signingKwey = []byte("")
+
 func main() {
 	err := godotenv.Load('../../.env')
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
+	signingKey = []byte(os.Getenv("JWT_SECRET"))
 
 	log.Printf("Server started")
 	dbHandler :=&{{packageName}}.DBHandler{}
