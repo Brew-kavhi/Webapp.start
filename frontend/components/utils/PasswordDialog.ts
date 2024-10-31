@@ -8,6 +8,7 @@ class PasswordDialog extends HTMLElement {
 		// Create dialog element
 		this.dialog = document.createElement('dialog');
 		this.dialog.style.height = 'fit-content';
+		this.dialog.style.maxWidth = '60%';
 		this.dialog.innerHTML = `
             <form method="dialog" class='card-body'>
                 <label for="password" class='mb-2'>Enter Password:</label>
