@@ -4,12 +4,12 @@
 		left: 50%;
 	"
 >
-	<h1 class="mb-4 text-center">Login</h1>
+<h1 class="mb-4 text-center">${i18next.t('login.header')}</h1>
 	<div class="text-center" id="message"></div>
 	<div class="mb-3">
 		<form id="login-form" class="mb-3">
 			<div class="mb-3">
-				<input type="text" id="username" name="username" placeholder="Username" autocomplete="username"	required class="form-control"
+				<input type="text" id="username" name="username" i18n-key="login.username" placeholder="${i18next.t('login.username')}" autocomplete="username"	required class="form-control"
 				/>
 			</div>
 			<div class="input-group mb-3" style="width: max-content">
@@ -17,7 +17,8 @@
 					name="password"
 					class="form-control"
 					autocomplete="current-password"
-					placeholder="Password"
+					i18n-key='login.password'
+					placeholder="${i18next.t('login.password')}"
 				/>
 				<div class="input-group-append">
 					<button	class="btn btn-primary input-group-btn p-1 d-flex" id="loginButton"
@@ -27,12 +28,12 @@
 				</div>
 			</div>
 			<button class="btn btn-primary rounded rounded-3" type="submit">
-				Login
+				${i18next.t("login.submit")}
 			</button>
 		</form>
 	</div>
 		<div style="display: grid">
-			<a href="/register" class="a link-secondary">Sign up</a>
-			<a href="/resetpassword" class="a link-secondary">Forgot password?</a>
+			<a href="/register" class="a link-secondary">${i18next.t('generic.sign_up')}</a>
+			<a href="/resetpassword" class="a link-secondary">${i18next.t('generic.reset_password')}</a>
 		</div>
 </div>

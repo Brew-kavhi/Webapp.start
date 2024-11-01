@@ -1,0 +1,35 @@
+{
+  "login": {
+    "header": "Login",
+    "submit": "Login",
+    "username": "Username",
+    "password": "Password",
+    "set_new_password": "Set new password",
+    "login": "Login",
+    "send_reset_mail": "Send mail with reset code",
+    "new_account": "New account"
+  },
+  "generic": {
+    "sign_up": "Sign up",
+    "reset_password": "Forgot Passowrd?",
+    "page_not_found": "Sorry, this page is not found"
+  },
+  "form": {
+    "submit": "Submit",
+    "send": "Send",
+    "save": "Save"
+  },
+  "settings": {
+    "twoFactor": {
+      "new": "",
+      "enter_code": "Enter the code from your authenticator app",
+      "enable_twofa": "Enable two factor authentication mechanism for your account",
+      "keep_two_fa": "We are happy, that you keep using the two factor authentication mechanism",
+      "disable_twofa": "Disable"
+    },
+    "delete_profile": "Delete Profile",
+    "add_credentials": "Add device credentials",
+    "edit_profile": "Edit profile",
+    "thrid": "Third party libraries"
+  }
+}

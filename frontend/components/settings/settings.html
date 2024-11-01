@@ -3,15 +3,15 @@
 		<h3>Settings</h3>
 	</div>
 	<ul>
-		<li onclick="alert('hi')"><a>Third party</a></li>
+		<li onclick="alert('hi')"><a>${i18next.t('settings.thrid')}</a></li>
 		<li onclick='window.router.loadUrl("/deleteprofile")'>
-			<a>Delete Profile</a>
+			<a>${i18next.t('settings.delete_profile')}</a>
 		</li>
 		<li onclick="window.router.loadUrl('/settings/editprofile')">
-			<a>Edit Profile</a>
+			<a>${i18next.t('settings.edit_profile')}</a>
 		</li>
 		<li onclick="window.router.loadUrl('/settings/credential')">
-			<a>Add device credentials</a>
+			<a>${i18next.t("settings.add_credentials")}</a>
 		</li>
 	</ul>
 </div>

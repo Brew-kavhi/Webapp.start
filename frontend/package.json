@@ -122,6 +122,7 @@
     "http-proxy-agent": "^5.0.0",
     "https-proxy-agent": "^5.0.1",
     "human-signals": "^2.1.0",
+    "i18next": "^23.16.4",
     "iconv-lite": "^0.6.3",
     "ignore": "^5.3.1",
     "import-fresh": "^3.3.0",
@@ -321,7 +322,8 @@
     "generate-api": "npm run generate-openapi && openapi-generator-cli generate -i ./client_api/merged-openapi.yaml -g typescript-axios -o ./client_api -t ../.ressources/templates/openapi/axios",
     "build": "vite build",
     "create-component": "./npm-scripts/create-component.sh",
-    "start": "echo 'Running docker development httpd server. Visit http://localhost:89/' && docker run -d -p 89:80 --mount src=$(pwd),target=/usr/local/apache2/htdocs/,type=bind --name webapp httpd  && docker logs --follow webapp"
+    "start": "echo 'Running docker development httpd server. Visit http://localhost:89/' && docker run -d -p 89:80 --mount src=$(pwd),target=/usr/local/apache2/htdocs/,type=bind --name webapp httpd  && docker logs --follow webapp",
+    "18n-keys": "i18next '**/*.html' -c i18next-parser-config.ts"
   },
   "keywords": [],
   "author": "",

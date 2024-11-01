@@ -1,0 +1,35 @@
+{
+  "login": {
+    "header": "Einloggen",
+    "submit": "",
+    "username": "",
+    "password": "",
+    "set_new_password": "",
+    "login": "",
+    "send_reset_mail": "",
+    "new_account": ""
+  },
+  "generic": {
+    "sign_up": "",
+    "reset_password": "",
+    "page_not_found": ""
+  },
+  "form": {
+    "submit": "",
+    "send": "",
+    "save": ""
+  },
+  "settings": {
+    "twoFactor": {
+      "new": "",
+      "enter_code": "",
+      "enable_twofa": "",
+      "keep_two_fa": "",
+      "disable_twofa": ""
+    },
+    "delete_profile": "",
+    "add_credentials": "",
+    "edit_profile": "",
+    "thrid": ""
+  }
+}

@@ -1,6 +1,6 @@
 <template id="edit-profile-template">
 	<div>
-		<h1 class="mb-4 text-center">Edit Profile</h1>
+		<h1 class="mb-4 text-center">${i18next.t('settings.edit_profile')}</h1>
 		<div class="text-center" id="message"></div>
 		<div class="mb-3">
 			<form id="register-form">
@@ -11,7 +11,7 @@
 				<div class="form-group mb-3" slot-name="email"></div>
 				<button class="d-flex align-items-center btn btn-primary" type="submit">
 					<sl-icon class='fs-2' name="check"></sl-icon>
-					Save
+					${i18next.t('form.save')}
 				</button>
 			</form>
 		</div>
@@ -23,14 +23,15 @@
 </template>
 
 <div id="container" class="bg-light p-5 rounded w-50 m-auto">
-	<button id="secondfactor" class="d-none m-auto mb-5 btn btn-primary">Enable Two factor Authentication for your account</button>
+	<button id="secondfactor" class="d-none m-auto mb-5 btn btn-primary">${i18next.t('settings.twoFactor.enable_twofa')}</button>
 	<div id='secondfactorenabled' class='d-none rounded-3 d-flex justify-content-between align-items-center border border-success-subtle'>
 		<p class="align-items-center d-flex m-0 ms-2">
-			<sl-icon class="fs-2 text-success" name="check"></sl-icon>Hurray, You have two factor authentication enabled.
+		<sl-icon class="fs-2 text-success" name="check"></sl-icon>
+			${i18next.t('settings.twoFactor.keep_two_fa')}
 		</p>
 		<button class="btn btn-danger d-flex align-items-center m-2" id="disable2fa">
 			<sl-icon name="x-lg" class='fs-5 me-2'></sl-icon>
-			Disable 2FA
+			${i18next.t('settings.twoFactor.disable_twofa')}
 		</button>
 	</div>
 	<div id="qrcode"></div>

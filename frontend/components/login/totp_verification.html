@@ -4,19 +4,19 @@
 		left: 50%;
 	"
 >
-	<h1 class="mb-4 text-center">Two factor</h1>
-	<div class="text-center mb-3" id="message">Enter teh second factor from your authenticator app.</div>
+<h1 class="mb-4 text-center">${i18next.t('settings.twoFactor.new')}</h1>
+<div class="text-center mb-3" id="message">${i18next.t('settings.twoFactor.enter_code')}</div>
 	<div class="mb-3">
 		<form id="verification-form" class="mb-3">
 			<div class="mb-3 d-flex justify-content-center">
 				<input class="form-control text-center" type="text" id="totp-code" name="totp" maxlength="6" pattern="\d{6}" inputmode="numeric" required placeholder="123456" title="Enter a 6-digit code"/>
 			</div>
 			<button class="btn btn-primary rounded rounded-3" type="submit">
-				Send
+				${i18next.t('form.send')}
 			</button>
 		</form>
 	</div>
-	<a href="/">Login</a>
+	<a href="/">${i18next.t('login.login')}</a>
 </div>
 <style>
 	input {
