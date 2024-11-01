@@ -2,6 +2,7 @@ import { requestNotificationPermission } from '/js/pwa.ts';
 import '@shoelace-style/shoelace/dist/components/icon/icon.js';
 import { Router } from '/js/router.ts';
 import { routes } from '/js/const/routes.ts';
+import i18next from '/i18n.ts';
 
 export class AppComponent extends HTMLElement {
 	private shadow;
@@ -29,6 +30,7 @@ Content loading
 		window.router = router;
 		// Register the service-worker
 		window.addEventListener('load', () => {
+			window.i18next = i18next;
 			const toast = document.getElementById("toast");
 			if (toast) {
 				window.toast = toast;

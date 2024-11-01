@@ -39,6 +39,9 @@ export class TemplatedComponent extends HTMLElement {
 	}
 }
 function getValueByPath(obj: any, path: string): any {
+	if (path.startsWith('i18next')) {
+		return eval(path);
+	}
 	return path
 		.split('.')
 		.reduce((accumulator, part) => accumulator && accumulator[part], obj);

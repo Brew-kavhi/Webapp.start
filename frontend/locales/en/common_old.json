@@ -1,0 +1,23 @@
+{
+  "welcome": "Welcome",
+  "goodbye": "Goodbye",
+  "sign_up": "",
+  "reset_password": "",
+  "${i18next": {
+    "t('login": {
+      "username')}": "",
+      "password')}": ""
+    }
+  },
+  "lopgin": {
+    "send_reset_mail": ""
+  },
+  "setings": {
+    "keep_two_fa": ""
+  },
+  "settings": {
+    "enable_twofa": "Enable two factor authentication for more security",
+    "keep_two_fa": "We are happy, that you keep using the two factor authentication mechanism.",
+    "disable_twofa": "Disable"
+  }
+}

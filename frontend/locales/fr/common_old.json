@@ -1,0 +1,19 @@
+{
+  "${i18next": {
+    "t('login": {
+      "username')}": "",
+      "password')}": ""
+    }
+  },
+  "lopgin": {
+    "send_reset_mail": ""
+  },
+  "setings": {
+    "keep_two_fa": ""
+  },
+  "settings": {
+    "enable_twofa": "",
+    "keep_two_fa": "",
+    "disable_twofa": ""
+  }
+}

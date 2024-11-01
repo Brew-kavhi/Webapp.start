@@ -1,6 +1,6 @@
 <template id="register-form-template">
 	<div class="bg-light p-5 rounded w-50 m-auto">
-		<h1 class="mb-4 text-center">New Account</h1>
+		<h1 class="mb-4 text-center">${i18next.t('login.new_account')}</h1>
 		<div class="text-center" id="message"></div>
 		<div class="mb-3">
 			<form id="register-form">
@@ -10,9 +10,9 @@
 				</div>
 				<div class="form-group mb-3" slot-name="email"></div>
 				<div class="row" slot-name="password"></div>
-				<button class="btn btn-primary" type="submit">Register</button>
+				<button class="btn btn-primary" type="submit">${i8next.t('login.register')}</button>
 			</form>
-			<a class="a link-secondary mt-3 d-block" href="/login">Login</a>
+			<a class="a link-secondary mt-3 d-block" href="/login">${i8next.t('login.login')}</a>
 		</div>
 	</div>
 	<style>
