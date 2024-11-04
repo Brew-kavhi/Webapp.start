@@ -74,6 +74,7 @@ class Register extends TemplatedComponent {
 		this.form.setHTML(template.innerHTML);
 		this.form.setDataScheme(User);
 		this.shadowRoot.addEventListener('form-submitted', this);
+		this.form.addBootstrap();
 	}
 
 	async handleEvent(e) {
