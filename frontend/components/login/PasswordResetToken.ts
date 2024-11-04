@@ -56,7 +56,6 @@ export class PasswordResetToken extends TemplatedComponent {
 	checkToken() {
 		if (this.passwordInput.validate()) {
 			const password = this.passwordInput.value;
-			console.log(password);
 			const queryString = window.location.search;
 			const urlParams = new URLSearchParams(queryString);
 			const email = urlParams.get("email");
