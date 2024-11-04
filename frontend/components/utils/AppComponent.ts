@@ -31,11 +31,25 @@ Content loading
 		// Register the service-worker
 		window.addEventListener('load', () => {
 			window.i18next = i18next;
+			i18next.on('languageChanged', function(lng) {
+				// fire custom event
+				localStorage.setItem('preferredLanguage', lng);
+				document.dispatchEvent(
+					new CustomEvent('language-changed', {
+						detail: {'lng': lng},
+						bubbles: true, // Allow the event to bubble up to other components
+						composed: true, // Allow event to pass through shadow DOM
+					})
+				);
+			});
 			const toast = document.getElementById("toast");
 			if (toast) {
 				window.toast = toast;
 			}
 			// Initialize router
+			if (!navigator.serviceWorker) {
+				return;
+			}
 			navigator.serviceWorker.register('/js/service-worker.js').then(
 				(registration) => {
 					console.log(
