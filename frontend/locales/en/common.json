@@ -31,5 +31,19 @@
     "add_credentials": "Add device credentials",
     "edit_profile": "Edit profile",
     "thrid": "Third party libraries"
+  },
+  "review": {
+    "Id": "",
+    "Hr_id": "",
+    "Producer": ""
+  },
+  "new_${model_name}": "",
+  "forms": {
+    "submit": ""
+  },
+  "lng": {
+    "choose": "Choose language",
+    "german": "German",
+    "english": "English"
   }
 }

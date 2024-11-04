@@ -1,6 +1,6 @@
 <template id="${modelName}-form-template">
 <div class="bg-light p-5 rounded w-50 m-auto">
-    <h1 class="mb-4 text-center">New ${className}</h1>
+    <h1 class="mb-4 text-center">${"${i18next.t('new_${model_name}')}"}</h1>
     <div class="text-center" id="message"></div>
     <div class="mb-3">
         <form id="${modelName}-form">
@@ -10,7 +10,7 @@
 				`<div class="form-group mb-3" slot-name="${field.name}"></div>`
 		)
 		.join('\n')}
-		<button class="btn btn-primary" type="submit">${i18next.t('forms.submit')}</button>
+		<button class="btn btn-primary" type="submit">${"${i18next.t('forms.submit')}"}</button>
         </form>
     </div>
 </div>

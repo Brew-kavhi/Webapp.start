@@ -31,5 +31,19 @@
     "add_credentials": "",
     "edit_profile": "",
     "thrid": ""
+  },
+  "review": {
+    "Id": "",
+    "Hr_id": "",
+    "Producer": ""
+  },
+  "new_${model_name}": "",
+  "forms": {
+    "submit": ""
+  },
+  "lng": {
+    "choose": "Sprache wahlen",
+    "german": "Deutsch",
+    "english": "English"
   }
 }

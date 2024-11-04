@@ -13,6 +13,17 @@
 		<li onclick="window.router.loadUrl('/settings/credential')">
 			<a>${i18next.t("settings.add_credentials")}</a>
 		</li>
+		<div>
+			<strong>${i18next.t('lng.choose')}</strong>
+			<div class="d-flex w-100 justify-content-between">
+				<p onclick="i18next.changeLanguage('de')" class="${i18next.language == 'de'? 'active': ''}">
+					${i18next.t('lng.german')}
+				</p>
+				<p onclick="i18next.changeLanguage('en')" class="${i18next.language == 'en'? 'active': ''}">
+					${i18next.t('lng.english')}
+				</p>
+			</div>
+		</div>
 	</ul>
 </div>
 <style>
@@ -23,11 +34,20 @@
 		width: fit-content;
 		min-width: 25%;
 	}
+	.w-100 {
+		width: 100%;
+	}
+	.justify-content-between {
+		justify-content: space-between;
+	}
+	.d-flex {
+		display: flex;
+	}
 	h3,
-	li {
+	ul>div, li {
 		padding: 0.5rem 1.75rem;
 		display: block;
-		cursor: pointer;
+		border-top: 1px solid lightgray;
 	}
 	h3 {
 		font-size: 24px;
@@ -35,10 +55,13 @@
 		margin: 0 !important;
 	}
 	li {
-		border-top: 1px solid lightgray;
+		cursor: pointer;
 	}
 	ul {
 		padding-left: 0px;
 		margin: 0px;
+	}
+	.active {
+		font-weight: bold;
 	}
 </style>
