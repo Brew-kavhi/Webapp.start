@@ -23,9 +23,9 @@
 </style>
 <div id="card" class="card">
 	<div class="card-header">
-	    <h3>${'${header}'}</h3>
+	    <h3>${'${props.header}'}</h3>
     </div>
     <div class="card-content">
-        ${fields.map((field) => `<p><strong>${capitalize(field.name)}:</strong> \${${field.name}}</p>`).join('\n')}
+	    ${fields.map((field) => `<p><strong>\${i18next.t('${modelName}.${capitalize(field.name)}')}:</strong> \${props.${field.name}}</p>`).join('\n')}
     </div>
 </div>

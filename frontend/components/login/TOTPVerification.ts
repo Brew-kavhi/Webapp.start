@@ -11,7 +11,7 @@
  */
 import { TemplatedComponent } from '/components/utils/TemplatedComponent.ts';
 import { USER_API_HOST } from '/js/const/host.ts';
-import templateHTML from '/components/login/totp_verification.html';
+import templateHTML from 'virtual:components/login/totp_verification';
 
 class TOTPVerification extends TemplatedComponent {
 	constructor() {
@@ -23,7 +23,7 @@ class TOTPVerification extends TemplatedComponent {
 	}
 
 	render() {
-		this.shadowRoot.innerHTML = this.dynamicHTML(templateHTML);
+		this.shadowRoot.innerHTML = templateHTML(this);
 		this.addBootstrap();
 		this.shadowRoot.addEventListener('submit', this);
 		this.shadowRoot.getElementById("totp-code").addEventListener("input", this.inputCode);

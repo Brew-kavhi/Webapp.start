@@ -12,7 +12,7 @@
 import { TemplatedComponent } from '/components/utils/TemplatedComponent.ts';
 import { authenticateUserBiometricCredentials } from '/js/pwa.ts';
 import { USER_API_HOST } from '/js/const/host.ts';
-import templateHTML from '/components/login/reset_password.html';
+import templateHTML from 'virtual:components/login/reset_password';
 
 export class ResetPassword extends TemplatedComponent {
 	constructor() {
@@ -24,7 +24,7 @@ export class ResetPassword extends TemplatedComponent {
 	}
 
 	render() {
-		this.shadowRoot.innerHTML = this.dynamicHTML(templateHTML);
+		this.shadowRoot.innerHTML = templateHTML(this);
 		this.addBootstrap();
 		this.shadowRoot.addEventListener('submit', this);
 	}

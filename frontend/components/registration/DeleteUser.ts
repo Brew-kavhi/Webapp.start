@@ -13,7 +13,7 @@ import { TemplatedComponent } from '/components/utils/TemplatedComponent.ts';
 import { Configuration } from '../../client_api';
 import { UserAPI } from '../../client_api/userModel';
 import { USER_API_HOST } from '/js/const/host';
-import templateHTML from '/components/registration/delete_user.html';
+import templateHTML from 'virtual:components/registration/delete_user';
 
 class DeleteUser extends TemplatedComponent {
 	private configuration: Configuration;
@@ -36,7 +36,7 @@ class DeleteUser extends TemplatedComponent {
 	}
 
 	render() {
-		this.shadowRoot.innerHTML = templateHTML;
+		this.shadowRoot.innerHTML = templateHTML(this);
 		this.addBootstrap();
 		this.addIcons();
 		this.shadowRoot!.addEventListener('click', this);

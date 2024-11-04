@@ -1,5 +1,5 @@
 import { TemplatedComponent } from '/components/utils/TemplatedComponent';
-import templateHTML from '/components/utils/templates/not_found.html';
+import templateHTML from 'virtual:components/utils/templates/not_found';
 
 export class NotFound extends TemplatedComponent {
 	constructor() {
@@ -11,7 +11,7 @@ export class NotFound extends TemplatedComponent {
 	}
 
 	render() {
-		this.shadowRoot.innerHTML = this.dynamicHTML(templateHTML);
+		this.shadowRoot.innerHTML = templateHTML(this);
 	}
 }
 customElements.define('not-found', NotFound);

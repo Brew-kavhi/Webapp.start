@@ -1,6 +1,6 @@
 import { Configuration } from '/client_api';
 import { ${className}, ${className}Api } from '/client_api/api.ts';
-import templateHTML from '/components/${serviceName}/${className}Form.html';
+import templateHTML from 'virtual:components/${serviceName}/${className}Form';
 import { FieldScheme, InputType } from '/js/types/FieldScheme';
 import { FormComponent } from '/components/utils/FormComponent.ts';
 import { ${className}_API_HOST } from '/js/const/host';
@@ -36,7 +36,7 @@ export class ${className}Form extends TemplatedComponent {
       }
 
       render() {
-        this.shadowRoot.innerHTML = this.dynamicHTML(templateHTML);
+        this.shadowRoot.innerHTML = templateHTML(this);
 		this.form = document.createElement('form-component');
 		this.form.setFields(this.fields);
 		this.shadowRoot.appendChild(this.form);

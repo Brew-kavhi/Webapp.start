@@ -12,7 +12,7 @@
 import { TemplatedComponent } from '/components/utils/TemplatedComponent.ts';
 import { registerUserBiometricCredentials } from '/js/pwa.ts';
 import { USER_API_HOST } from '/js/const/host.ts';
-import templateHTML from '/components/registration/register-credentials.html';
+import templateHTML from 'virtual:components/registration/register-credentials';
 
 class RegisterCredentials extends TemplatedComponent {
 	constructor() {
@@ -24,7 +24,7 @@ class RegisterCredentials extends TemplatedComponent {
 	}
 
 	render() {
-		this.shadowRoot.innerHTML = this.dynamicHTML(templateHTML);
+		this.shadowRoot.innerHTML = templateHTML(this);
 		this.shadowRoot.addEventListener('click', this);
 	}
 
