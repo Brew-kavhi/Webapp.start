@@ -2,7 +2,6 @@
 
 import { coerceToArrayBuffer, coerceToBase64Url } from '/js/utils.js';
 
-const registration = await navigator.serviceWorker.getRegistration();
 export function requestNotificationPermission() {
 	console.log(Notification.permission);
 	if ('Notification' in window) {
@@ -19,11 +18,23 @@ export function requestNotificationPermission() {
 }
 
 // Function to send a notification
-export function sendLocalNotification(
+export async function sendLocalNotification(
 	title: string = 'Notification',
 	body: string = 'New Message',
 	icon: string = ''
 ) {
+	let registration = undefined;
+	if (!navigator.serviceWorker) {
+		return;
+		}
+	if (!navigator.serviceWorker.getRegistration) {
+		return;
+	}
+	if (!Navigation) {
+		return;
+	}
+	const i = await navigator.serviceWorker.getRegistration();
+	navigator.serviceWorker.getRegistration().then((response) => registration = response);
 	if (Notification.permission === 'granted') {
 		const payload = {
 			body: body,
