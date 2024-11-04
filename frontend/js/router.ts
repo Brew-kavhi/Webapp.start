@@ -108,16 +108,15 @@ export class Router {
 
 		// Create the component and pass the params if needed
 		import(
-			`/components/${matchedRoute.module}/${matchedRoute.component}.ts`
-		).then((componentModule) => {
-			const component = document.createElement(matchedRoute.tagName);
-			if (params) component.params = params;
-			if (this.routeData) component.data = this.routeData;
-			this.routeData = undefined;
+			`../components/${matchedRoute.module}/${matchedRoute.component}.ts`
+		)
+		const component = document.createElement(matchedRoute.tagName);
+		if (params) component.params = params;
+		if (this.routeData) component.data = this.routeData;
+		this.routeData = undefined;
 
-			document
-				.getElementsByTagName('app-component')[0]
-				.loadContent(component, matchedRoute);
-		});
+		document
+			.getElementsByTagName('app-component')[0]
+			.loadContent(component, matchedRoute);
 	}
 }
