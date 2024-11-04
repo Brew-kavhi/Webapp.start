@@ -33,6 +33,59 @@ The first 5 rules are enforced using github actions and gitlab pipelines.
 This repository comes with testing frameworks, so to conduct the tests for the backend run make test, for testing of the the frontend run npm run test
 Deployment is done with docker. Therefor each service creted with make already contains a basic dockerfile, that can be used to deploy this service.
 
+## Features
+This framework comes with a few default implementations of regularly used features.
+**Backend:**
+- [x] User service:
+    - [x] login/logout
+    - [x] Passowrd reset
+    - [x] two factor authentication using authenticator app on client
+    - [x] Webauthn
+    - [x] Register new users
+    - [x] Edit profile
+- [x] Microservices
+    - [x] autogenerate go microservices from an openapi scheme. The service comes fully usable out of the box with database connection (to sqlite per default), automigrations and access functions.
+    - [x] Each service contains a dockerfile for easy deployment
+    - [x] input validation against minimum, maximum, minLength and maxLength specs from openapi-scheme
+- [x] Authentication using json web token
+- [x] Kong api gateway
+    - [x] Setup of a kong api gateway to handle microservices and frontend with one endpoint
+**Frontend:**
+- [x] Multilingual frontend using i18next
+- [x] Custom Router, that handles loading components
+    - [x] define routes in js/routes.ts as json.
+- [x] Vite build with plugin to load html for webcomponents from separate files and inject as template literal string.
+- [x] Autogenerate webcomponents based on openapi scheme
+    - [x] Card: displays a brief overview of an entity
+    - [x] List: Holds a list of cards
+    - [x] Form: Displays a form for creating a new entity
+    - [x] Deails: display details / all information of an entity
+- [x] autogenerate API using openapi-generator
+- [x] QR-Code scanner component.
+- [x] PWA start point
+- [x] Toast component
+**Dev:**
+- [x] extract all i18n keys automatically
+- [x] formating and linting
+
+## Usage
+The backend contains a make file with all related functionalities, like:
+- make user-service: generates the user service with all authentication mechanism...
+- make create-service name=<name>: generates a base for a new microservice. That is, intall a few packages, a default api-scheme...
+- make generte-stubs module=<name>: using openapi-generator the server stubs for the specified are generated. This also inclues a sqlite database handler.
+- make run-kong: runs kong in a docker container
+Most of this, relies on a few templates that are defined in .ressources/templates. Also if you want to customize the openapi-generator, some templates therefor are also given.
+
+For the frontend we also have a few commands that make your life easier:
+- npm run lint: lints all modules
+- npm run format: formats all modules
+- npm run dev: runs dev server
+- npm run generate-openapi: This generates kong config file and merges all microservice api schemes from the backend into one api-scheme for the frontend.
+- npm run generate-api: generates the api for the frontend.
+- npm run build: builds a web application.
+- npm run i18n-keys: extract all translation keys from the html files.
+- npm run model-components <name>: creates the card, list, detail and form component from the microservice specified with <name>
+
 ## Roadmap
 In the future this repo will also contain the necessary files for docker-compose so a docker cluster can be setup easily. Furthermore, we will enforce rules by github actions and gitlab pipelines. AS of now, only some basic actions and pipelines are defined on main branch, but for other branches there will be ore rules following.
 <<<<<<< HEAD
