@@ -25,7 +25,7 @@ if [ -z "$tagName" ]; then
     exit 1
 fi
 # Define the directory path
-directoryPath="./components/$folderName"
+directoryPath="components/$folderName"
 
 # Create the directory if it doesn't exist
 if [ ! -d "$directoryPath" ]; then
@@ -46,7 +46,7 @@ componentContent=$(cat <<EOF
  * Copyright 
  */
 import { TemplatedComponent } from '/components/utils/TemplatedComponent.js';
-import templateHTML from '$directoryPath/$componentName-template.html';
+import templateHTML from 'virtual:$directoryPath/$componentName-template.html';
 
 class $componentName extends TemplatedComponent {
 	constructor() {
@@ -58,7 +58,7 @@ class $componentName extends TemplatedComponent {
 	}
 
 	render() {
-	    this.shadowRoot.innerHTML = this.dynamicHTML(templateHTML);
+	    this.shadowRoot.innerHTML = templateHTML(this);
 	}
 }
 customElements.define('$tagName', $componentName);

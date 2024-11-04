@@ -12,7 +12,7 @@
 import { TemplatedComponent } from '/components/utils/TemplatedComponent.ts';
 import { authenticateUserBiometricCredentials } from '/js/pwa.ts';
 import { USER_API_HOST } from '/js/const/host.ts';
-import templateHTML from '/components/login/password_reset_token.html';
+import templateHTML from 'virtual:components/login/password_reset_token';
 import { FieldScheme, InputType } from '../../js/types/FieldScheme';
 
 export class PasswordResetToken extends TemplatedComponent {
@@ -34,7 +34,7 @@ export class PasswordResetToken extends TemplatedComponent {
 	}
 
 	render() {
-		this.shadowRoot.innerHTML = this.dynamicHTML(templateHTML);
+		this.shadowRoot.innerHTML = templateHTML(this);
 		// replace slot-anem ith the password input
 		this.passwordInput = document.createElement('input-field');
 		this.passwordInput.field = this.passwordField;

@@ -11,7 +11,7 @@
  */
 import { routes } from '/js/const/routes.js';
 import { TemplatedComponent } from '/components/utils/TemplatedComponent';
-import templateHTML from '/components/navigation/header/header.html';
+import templateHTML from 'virtual:components/navigation/header/header';
 
 class Header extends TemplatedComponent {
 	private routes: Route[];
@@ -41,7 +41,7 @@ class Header extends TemplatedComponent {
 	}
 
 	render() {
-		this.shadowRoot.innerHTML = this.dynamicHTML(templateHTML);
+		this.shadowRoot.innerHTML =templateHTML(this);
 		this.setupNavigation();
 		this.addIcons();
 	}

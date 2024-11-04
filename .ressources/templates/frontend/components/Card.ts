@@ -1,6 +1,6 @@
 import { Configuration } from '/client_api';
 import { ${className}, ${className}Api } from '/client_api/api.ts';
-import templateHTML from '/components/${serviceName}/${className}Card.html';
+import templateHTML from 'virtual:components/${serviceName}/${className}Card';
 import { ${className}_API_HOST } from '/js/const/host.ts';
 import { TemplatedComponent } from '/components/utils/TemplatedComponent';
 
@@ -44,7 +44,7 @@ export class ${className}Card extends TemplatedComponent {
       }
 
       render() {
-        this.shadowRoot.innerHTML = this.dynamicHTML(templateHTML);
+        this.shadowRoot.innerHTML = templateHTML(this);
 	this.shadowRoot.addEventListener('click', this);
       }
 

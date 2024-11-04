@@ -16,7 +16,7 @@ import { FieldScheme, InputType } from '/js/types/FieldScheme';
 import { USER_API_HOST } from '/js/const/host';
 import { TemplatedComponent } from '/components/utils/TemplatedComponent.ts';
 import { FormComponent } from '/components/utils/FormComponent';
-import templateHTML from '/components/settings/edit_profile.html';
+import templateHTML from 'virtual:components/settings/edit_profile';
 
 class EditProfile extends TemplatedComponent {
 	private configuration: Configuration;
@@ -99,7 +99,8 @@ class EditProfile extends TemplatedComponent {
 				console.log(error);
 			});
 
-		this.shadowRoot.innerHTML = this.dynamicHTML(templateHTML);
+		this.shadowRoot.innerHTML = templateHTML(this);
+		this.addBootstrap();
 		const button = this.shadowRoot.getElementById("secondfactor");
 		let template = this.shadowRoot?.getElementById('edit-profile-template');
 		

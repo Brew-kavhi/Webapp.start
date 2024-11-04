@@ -10,7 +10,7 @@
  * Copyright Marius Goehring
  */
 import { TemplatedComponent } from '/components/utils/TemplatedComponent.ts';
-import templateHTML from '/components/settings/settings.html';
+import templateHTML from 'virtual:components/settings/settings';
 
 class Settings extends TemplatedComponent {
 	constructor() {
@@ -22,7 +22,7 @@ class Settings extends TemplatedComponent {
 	}
 
 	render() {
-		this.shadowRoot.innerHTML = this.dynamicHTML(templateHTML);
+		this.shadowRoot.innerHTML = templateHTML(this);
 	}
 }
 customElements.define('settings-page', Settings);

@@ -1,6 +1,6 @@
 import { Configuration } from '/client_api';
 import { ${className}, ${className}Api } from '/client_api/api.ts';
-import templateHTML from '/components/${serviceName}/${className}Detail.html';
+import templateHTML from 'virtual:components/${serviceName}/${className}Detail';
 import { TemplatedComponent } from '/components/utils/TemplatedComponent';
 import { ${className}_API_HOST } from '/js/const/host';
 
@@ -52,7 +52,7 @@ export class ${className}Details extends TemplatedComponent {
                   this.get${className}();
               }
           }
-          this.shadowRoot.innerHTML = this.dynamicHTML(templateHTML);
+          this.shadowRoot.innerHTML = templateHTML(this);
       }
 
       get${className}() {
