@@ -193,6 +193,7 @@
     "lodash.merge": "^4.6.2",
     "lru-cache": "^5.1.1",
     "lz-string": "^1.5.0",
+    "magic-string": "^0.30.12",
     "make-dir": "^4.0.0",
     "makeerror": "^1.0.12",
     "merge-stream": "^2.0.0",
@@ -320,10 +321,10 @@
     "dev": "vite --host",
     "generate-openapi": "node ./npm-scripts/generate_kong_openapi.js",
     "generate-api": "npm run generate-openapi && openapi-generator-cli generate -i ./client_api/merged-openapi.yaml -g typescript-axios -o ./client_api -t ../.ressources/templates/openapi/axios",
-    "build": "vite build",
+    "build": "vite --config vite.config.mts build",
     "create-component": "./npm-scripts/create-component.sh",
-    "start": "echo 'Running docker development httpd server. Visit http://localhost:89/' && docker run -d -p 89:80 --mount src=$(pwd),target=/usr/local/apache2/htdocs/,type=bind --name webapp httpd  && docker logs --follow webapp",
-    "18n-keys": "i18next '**/*.html' -c i18next-parser-config.ts"
+    "start": "echo 'Running docker development httpd server. Visit http://localhost:89/' && docker run -d -p 89:80 --mount src=$(pwd)/dist,target=/usr/local/apache2/htdocs/,type=bind --name webapp httpd && docker logs --follow webapp",
+    "i18n-keys": "i18next '**/*.html' -c i18next-parser-config.ts"
   },
   "keywords": [],
   "author": "",
@@ -334,6 +335,7 @@
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "typescript": "^5.6.3",
     "vite": "^5.4.9",
-    "vite-plugin-pwa": "^0.20.5"
+    "vite-plugin-pwa": "^0.20.5",
+    "vite-plugin-static-copy": "^2.0.0"
   }
 }

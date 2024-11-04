@@ -1,11 +1,11 @@
-# Use an official nginx image as the base image
-FROM nginx:alpine
+# Use an official Apache HTTP Server image as the base
+FROM httpd:latest
 
-# Copy the current directory contents into the /usr/share/nginx/html directory
-COPY . /usr/share/nginx/html
+# Enable .htaccess by updating the Apache configuration
+RUN sed -i 's/AllowOverride None/AllowOverride All/g' /usr/local/apache2/conf/httpd.conf
 
-# Expose port 80
+RUN sed -i 's/#LoadModule rewrite_module modules\/mod_rewrite.so/LoadModule rewrite_module modules\/mod_rewrite.so/g' /usr/local/apache2/conf/httpd.conf
+# Copy the .htaccess file into the default document root
+COPY dist /usr/local/apache2/htdocs
+COPY .htaccess /usr/local/apache2/htdocs/.htaccess
 EXPOSE 80
-
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
