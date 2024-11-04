@@ -12,8 +12,9 @@
 
 import { FieldScheme } from '/js/types/FieldScheme';
 import { InputComponent } from '/components/utils/InputComponent.ts';
+import { TemplatedComponent } from './TemplatedComponent';
 
-export class FormComponent extends HTMLElement {
+export class FormComponent extends TemplatedComponent {
 	private dataScheme: new () => T;
 	private innerHTML: string;
 	private dataFields: Array<FieldScheme>;
@@ -22,7 +23,6 @@ export class FormComponent extends HTMLElement {
 
 	constructor() {
 		super();
-		this.attachShadow({ mode: 'open' });
 		this.inputs = new Map();
 	}
 

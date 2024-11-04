@@ -108,6 +108,7 @@ class EditProfile extends TemplatedComponent {
 
 		this.shadowRoot.getElementById("container").insertBefore(this.form, button);
 		this.form.setHTML(template.innerHTML);
+		this.form.addBootstrap();
 		this.form.setDataScheme(User);
 
 		this.shadowRoot.addEventListener('form-submitted', this);
