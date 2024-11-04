@@ -323,6 +323,7 @@
     "generate-api": "npm run generate-openapi && openapi-generator-cli generate -i ./client_api/merged-openapi.yaml -g typescript-axios -o ./client_api -t ../.ressources/templates/openapi/axios",
     "build": "vite --config vite.config.mts build",
     "create-component": "./npm-scripts/create-component.sh",
+    "model-components": "node npm-scripts/autoGenerateModelComponent.js",
     "start": "echo 'Running docker development httpd server. Visit http://localhost:89/' && docker run -d -p 89:80 --mount src=$(pwd)/dist,target=/usr/local/apache2/htdocs/,type=bind --name webapp httpd && docker logs --follow webapp",
     "i18n-keys": "i18next '**/*.html' -c i18next-parser-config.ts"
   },
