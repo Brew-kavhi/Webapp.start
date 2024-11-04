@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"log" 
 	"strconv"
 
 	"github.com/go-webauthn/webauthn/webauthn"
@@ -37,7 +36,10 @@ func writeJSON(w http.ResponseWriter, data interface{}) {
 func main() {
 	envErr := godotenv.Load("../../.env")
 	if envErr != nil {
-		log.Fatal("Error loading .env file")
+		envErr = godotenv.Load(".env")
+		if envErr != nil {
+			fmt.Println("Error loading .env file")
+		}
 	}
 
 	signingKey = []byte(os.Getenv("JWT_SECRET"))
