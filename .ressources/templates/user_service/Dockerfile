@@ -16,5 +16,5 @@ ENV CGO_ENABLED=1
 
 RUN go build -o user_service .
 
-EXPOSE 10001/tcp
+EXPOSE 8080/tcp
 ENTRYPOINT ["./user_service"]

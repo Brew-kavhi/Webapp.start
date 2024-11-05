@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  user-service:
+    extends:
+      file: ./services/user/user_service.docker.yaml
+      service: user-service
+  frontend:
+    extends:
+      file: ./frontend/frontend_service.docker.yaml
+      service: frontend
+  kong:
+    image: "kong"
+    ports:
+      - "8000:8000"
+    volumes:
+      - type: bind
+        source: ./services/kong_compose.yaml
+        target: /kong/declarative/kong.yaml
+    environment:
+      - KONG_DATABASE=off
+      - KONG_DECLARATIVE_CONFIG=/kong/declarative/kong.yaml

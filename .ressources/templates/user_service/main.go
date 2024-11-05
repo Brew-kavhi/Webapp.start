@@ -93,7 +93,7 @@ RPOrigins:      []string{"https://homeserver:10001", "https://pwa.mariusgoehring
 	})
 
 	fmt.Println("Server starting...")
-	if err := http.ListenAndServe(":10001", secureHeadersMiddleware(c.Handler(handler))); err != nil {
+	if err := http.ListenAndServe(":8080", secureHeadersMiddleware(c.Handler(handler))); err != nil {
 		fmt.Println("Error starting server:", err)
 	}
 }

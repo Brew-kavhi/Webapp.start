@@ -1,0 +1,8 @@
+version : '3.8'
+
+services:
+  {{name}}-service:
+    image: "{{name}}_service"
+    build:  
+      context: . 
+    env_file: "../../.env"

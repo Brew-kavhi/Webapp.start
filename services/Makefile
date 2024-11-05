@@ -4,7 +4,7 @@ MODULES :=
 GOLANGCI_LINT = $(shell which golangci-lint)
 GOIMPORTS = $(shell which goimports)
 
-COMPOSE_FILE = ../docker-compose.yml
+COMPOSE_FILE = ../docker-compose.yaml
 FRONTEND_DIR = frontend
 SERVICES_DIR = .
 makeFileDir := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
@@ -89,22 +89,14 @@ generate-stubs:
 
 .PHONY: generate-compose
 generate-compose:
-	@echo "version: '3.8'" > $(COMPOSE_FILE)
-	@echo "services:" >> $(COMPOSE_FILE)
-	@echo "  frontend:" >> $(COMPOSE_FILE)
-	@echo "    build: ./$(FRONTEND_DIR)" >> $(COMPOSE_FILE)
-	@echo "    ports:" >> $(COMPOSE_FILE)
-	@echo "      - '80:80'" >> $(COMPOSE_FILE)
-	@echo "    environment:" >> $(COMPOSE_FILE)
-	@echo "      - ENV_VAR=example_value" >> $(COMPOSE_FILE)
-	@find $(SERVICES_DIR) -maxdepth 1 -type d -not -name '.*' -not -name '.' | while read service; do \
+	@cd ../frontend && npm run generate-openapi
+	@cp ../.ressources/templates/docker-compose.yaml ../docker-compose.yaml
+	@find $(SERVICES_DIR) -maxdepth 1 -type d -not -name 'user' -not -name '.*' -not -name '.' | while read service; do \
 		service_name=$$(basename $$service); \
-		echo "  $$service_name:" >> $(COMPOSE_FILE); \
-		echo "    build: ./services/$$service" >> $(COMPOSE_FILE); \
-		echo "    ports:" >> $(COMPOSE_FILE); \
-		echo "      - '808$${service_name##service}:8080'" >> $(COMPOSE_FILE); \
-		echo "    environment:" >> $(COMPOSE_FILE); \
-		echo "      - ENV_VAR=example_value" >> $(COMPOSE_FILE); \
+		echo "  $$service_name-service:" >> $(COMPOSE_FILE); \
+		echo "    extends:" >> $(COMPOSE_FILE); \
+		echo "      file: ./services/$$service_name/$$service_name""_service.docker.yaml" >> $(COMPOSE_FILE); \
+		echo "      service: $$service_name-service" >> $(COMPOSE_FILE); \
 	done
 
 # Build all modules
@@ -177,15 +169,16 @@ run:
 
 .PHONY: run-kong
 run-kong:
-	echo "creating the docker network"; \
-	docker network create kong-net; \
+	echo "running Kong in a standalone docker container"; \
+	echo "You should consider running kong from docker-compose in a network with all the other services"; \
 	docker pull kong@latest; \
 	echo "checking for the kong configuration"
 	@if ! [ -f "kong.yaml" ]; then \
 		echo "file does not exist, creating one.";\
 		cd ../frontend && npm run generate-openapi; \
 	fi;
-	docker run -it --name kong-dbless --network=kong-net \
+	# TODO add here some dns information
+	docker run -it --name kong-dbless \
 		--mount type=bind,source=${makeFileDir}services/kong.yaml,target=/kong/declarative/kong.yml \
 	--security-opt apparmor=unconfined \
 	-e "KONG_DATABASE=off" \
@@ -249,18 +242,14 @@ create-service:
 		sed \
 			-e 's/{{MODULE}}/$(CAPITALIZED_NAME)/g' \
 			../../.ressources/templates/services/api_scheme.yaml > api_scheme.yaml; \
+		sed \
+			-e 's/{{name}}/$(name)/g' \
+			../../.ressources/templates/services/service.docker.yaml > $(name)-service.docker.yaml; \
 		echo "Creating $(name)_test.go for $(name)"; \
 		cp ../../.ressources/templates/services/middleware.go middleware.go; \
 		cp ../../.ressources/templates/services/utils.go utils.go; \
 		echo 'package main\n\nimport "testing"\n\nfunc TestMain(t *testing.T) {\n\texpected := "Hello, world!"\n\tactual := "Hello, world!"\n\tif actual != expected {\n\t\tt.Errorf("expected %v, got %v", expected, actual)\n\t}\n}' > $(name)_test.go; \
 		go get github.com/stretchr/testify; \
-		echo "Adding service to docker compose"; \
-		cd ..; \
-		$(eval LEN := $(shell printf '%s' '$(subst ','"'"',$(MODULES))' | wc -c))\
-		echo "  $$name:" >> $(COMPOSE_FILE); \
-		echo "    build: ./services/$$name" >> $(COMPOSE_FILE); \
-		echo "    ports:" >> $(COMPOSE_FILE); \
-		echo "      - '808$(LEN):8080'" >> $(COMPOSE_FILE); \
 		echo "Next step: edit the api_scheme to your desire and then autogenerate the boiler plate code by running make generate-stubs module=$$name"; \
 	fi
 
