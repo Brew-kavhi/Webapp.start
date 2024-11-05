@@ -29,6 +29,19 @@ let kongConfig = {
        }]
 };
 
+// Kong config for use in docker compose
+let kongComposeConfig = {
+	_format_version: '2.1',
+	services: [],
+	consumers:[
+        {
+            username: "Frontend",
+            jwt_secrets: [{
+                key: "frontend_jwt_token_key",
+                secret: process.env.JWT_SECRET
+            }]
+       }]
+};
 // Function to merge components
 const mergeComponents = (target, source) => {
 	for (let [key, value] of Object.entries(source)) {
@@ -64,6 +77,11 @@ const processOpenApiFile = (filePath) => {
 		url: serviceUrl,
 		routes: [],
 	};
+	let composeService = {
+		name: serviceName,
+		url: serviceUrl,
+		routes: [],
+	};
 
 	Object.keys(paths).forEach((path) => {
 		// Merge the paths into the merged OpenAPI spec
@@ -87,6 +105,13 @@ const processOpenApiFile = (filePath) => {
 				strip_path: true,
 				plugins: [{name:'jwt', config:{cookie_names:['jwt']}}]
 			});
+			composeService.routes.push({
+				name: serviceName,
+				paths: [`/api/${tag}`],
+				strip_path: true,
+				plugins: [{name:'jwt', config:{cookie_names:['jwt']}}]
+			});
+			composeService.url = `http://${tag.toLowerCase()}-service:8080`;
 			hostNames.push({
 				name: `${tag}_API_HOST`,
 				url: `${process.env.APP_URL}/api/${tag}`,
@@ -100,6 +125,7 @@ const processOpenApiFile = (filePath) => {
 	}
 
 	kongConfig.services.push(service);
+	kongComposeConfig.services.push(composeService);
 };
 
 let kongPort = 8000;
@@ -111,9 +137,9 @@ const openApiFiles = getAPISchemes('../services');
 
 // Process each OpenAPI file
 openApiFiles.forEach(processOpenApiFile);
-kongConfig.services.push({
+let userService = {
 	name: 'user-api',
-	url: `${process.env.SERVICES_HOST}:10001`,
+	url: "http://user-service:8080",
 	routes: [
 		{
 			name: 'user-route',
@@ -121,14 +147,17 @@ kongConfig.services.push({
 			strip_path: true,
 		},
 	],
-});
+};
+kongComposeConfig.services.push(userService);
+userService['url'] = `${process.env.SERVICES_HOST}:10001`;
+kongConfig.services.push(userService);
 hostNames.push({
 	name: `USER_API_HOST`,
 	url: `${process.env.APP_URL}/api/user`,
 });
-kongConfig.services.push({
+let frontendService = {
 	name: 'frontend',
-	url: `${process.env.FRONTEND_HOST}:${process.env.FRONTEND_PORT}`,
+	url: "http://frontend:80",
 	routes: [
 		{
 			name: 'frontend-route',
@@ -136,10 +165,14 @@ kongConfig.services.push({
 			strip_path: false,
 		},
 	],
-});
+};
+kongComposeConfig.services.push(frontendService);
+frontendService['url'] = `${process.env.FRONTEND_HOST}:${process.env.FRONTEND_PORT}`;
+kongConfig.services.push(frontendService);
 
 // Write the kong.yaml file
 fs.writeFileSync('../services/kong.yaml', yaml.dump(kongConfig), 'utf8');
+fs.writeFileSync('../services/kong_compose.yaml', yaml.dump(kongComposeConfig), 'utf8');
 fs.writeFileSync(
 	'js/const/host.ts',
 	hostNames
