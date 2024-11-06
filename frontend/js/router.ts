@@ -107,7 +107,7 @@ export class Router {
 		window.history.pushState({}, '', `/${urlSegments.join('/')}${window.location.search}`);
 
 		// Create the component and pass the params if needed
-		import(
+		import(/* webpackPreload: true */
 			`../components/${matchedRoute.module}/${matchedRoute.component}.ts`
 		)
 		const component = document.createElement(matchedRoute.tagName);
