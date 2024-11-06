@@ -10,12 +10,25 @@ export default defineConfig({
 	build: {
 		outDir: 'dist', // Output directory for production build
 		sourcemap: true, // Enable sourcemaps for easier debugging
+		manifest: true,
 		rollupOptions: {
 			external: ['**/*.html'],
 			output: {
 				manualChunks(id) {
 					if (id.includes('node_modules')) {
 						return 'vendor'; // Separate vendor dependencies
+					}
+					if (id.includes('TemplatedComponent')) {
+						return 'templated-component';
+					}
+					if (id.includes('Toast')) {
+						return 'comp-utils';
+					}
+					if (id.includes('FormComponent')) {
+						return 'comp-utils';
+					}
+					if (id.includes('AppComponent')) {
+						return 'comp-utils';
 					}
 				},
 			},

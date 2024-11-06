@@ -14,7 +14,7 @@ export default function htmlToTemplatePlugin() {
 				);
 				const htmlContent = await fs.readFile(path + '.html', 'utf-8');
 				const escapedContent = htmlContent;
-				console.log('load finished');
+				console.log(path + ' is loaded.');
 				// Create a function that accepts dynamic values and returns the template
 				const jsContent = `export default (props) => \`${escapedContent}\`;`;
 
