@@ -23,10 +23,10 @@ export class ${className}Form extends TemplatedComponent {
         this.api = new ${className}Api(this.configuration);
         this.fields = [
           ${fields.map((field) =>`{
+            label: i18next.t('${field.name}'),
             name: '${field.name}',
-            label: '${field.name}',
-            type: InputType.Text,
-            required: true,
+            type: ${field.type},
+            required: false,
           }`).join(',\n')}
         ];
       }
