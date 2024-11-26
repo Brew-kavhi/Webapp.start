@@ -41,7 +41,6 @@ function evaluateExpressions(str, context = {}) {
 				const expression = str.slice(exprStart + 2, i); // Get expression within `${}`
 				let evaluated;
 				try {
-					console.log(expression);
 					const func = new Function(
 						...Object.keys(context),
 						`return ${expression};`
@@ -211,6 +210,85 @@ function generateCardComponent(modelName, fields) {
 	console.log(`Generated ${modelName}Card.ts`);
 }
 
+function calculateType(property) {
+	switch(property.type) {
+		case 'string': {
+			// format: date, date-time
+			// enum contains enum field
+			if (property.enum) {
+				let values = property.enum.map((_enum) => ({
+					value: _enum,
+					label: _enum
+				}));
+				return 'InputType.Select,\n options: ' + JSON.stringify(values);
+			}
+			if (property.format) {
+				switch(property.format) {
+					case "date": {
+						return "InputType.Date";
+					}
+					case "date-time": {
+						return "InputType.DateTime";
+					}
+				}
+			}
+			return "InputType.Text";
+		}
+		case 'object': {
+			// most difficult type, as this involves subfields
+			break;
+		}
+		case 'integer': {
+			// format: int8, int64
+			return "InputType.Number";
+		}
+		case 'number': {
+			//format: float
+			return "InputType.Number";
+		}
+		case 'array': {
+			// look for items type
+			if (property.items && property.items['type'] == 'string') {
+				return "InputType.StringArray";
+			}
+			if (property.items && property.items['type'] == 'int') {
+				return "InputType.NumberArray";
+			}
+			// introduce a new inputtype
+			break;
+		}
+	}
+	return "InputType.Text";
+}
+
+function getAllProperties(model) {
+	const properties = model.properties;
+	let fields = [];
+	if (properties) {
+		fields = Object.keys(properties).map((prop) => ({
+			name: prop,
+			type: calculateType(properties[prop]),
+		}));
+	}
+	if (model.allOf) {
+		model.allOf.forEach((ref) => {
+			let component = ref['$ref'];
+			// get the models name
+			let modelName = component.split('/').pop();
+			console.log(modelName);
+			let refModel = models[modelName];
+			Object.keys(refModel.properties).forEach((prop) => {
+				console.log(refModel.properties[prop]);
+				fields.push({
+					name: prop,
+					type: calculateType(refModel.properties[prop])
+				});
+			});
+		});
+	}
+	return fields;
+}
+
 // Ensure the output directory exists
 if (!fs.existsSync(outputDir)) {
 	fs.mkdirSync(outputDir);
@@ -219,13 +297,24 @@ if (!fs.existsSync(outputDir)) {
 // Generate components based on each schema definition
 const models = schema.components.schemas;
 const model = models[capitalize(serviceName)];
-const properties = model.properties;
-const fields = Object.keys(properties).map((prop) => ({
-	name: prop,
-	type: properties[prop].type,
-}));
+let responseModel = model;
+let requestModel = model;
+if (capitalize(serviceName) + "Response" in models) {
+	responseModel = models[capitalize(serviceName) + "Response"];
+}
+if ("New" + capitalize(serviceName) + "Request" in models) {
+	requestModel = models["New" + capitalize(serviceName) + "Request"];
+}
 
-generateDetailsComponent(serviceName, fields);
-generateListComponent(serviceName, fields);
-generateCardComponent(serviceName, fields);
-generateFormComponent(serviceName, fields);
+
+// model field
+generateDetailsComponent(serviceName, getAllProperties(model));
+
+// response field
+generateListComponent(serviceName, getAllProperties(responseModel));
+
+// response field
+generateCardComponent(serviceName, getAllProperties(responseModel));
+
+// request field
+generateFormComponent(serviceName, getAllProperties(requestModel));
