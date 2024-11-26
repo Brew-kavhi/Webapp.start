@@ -41,3 +41,12 @@ func validateCookie(cookie *http.Cookie) (uint, error) {
 	}
 	return userID, nil
 }
+
+func Has(a string, list []string) bool {
+	for _,b := range list {
+		if b == a {
+			return true;
+		}
+	}
+	return false
+}
