@@ -1,13 +1,16 @@
 {{>partial_header}}
 package {{packageName}}
 
-{{#models}}{{#imports}}
+{{#models}}
+{{#imports}}
 {{#-first}}import (
-	"unicode/utf8"
-{{/-first}}	"{{import}}"{{#-last}}
+	//"unicode/utf8"
+{{#model}}{{#hasEnums}}"errors"{{/hasEnums}}{{/model}}
+{{/-first}}
+"{{import}}"{{#-last}}
 )
-{{/-last}}{{/imports}}
-
+{{/-last}}
+{{/imports}}
 {{#model}}{{#isEnum}}{{#description}}// {{{classname}}} : {{{description}}}{{/description}}
 type {{{classname}}} {{^format}}{{dataType}}{{/format}}{{{format}}}
 
@@ -73,7 +76,7 @@ type {{classname}} struct {
 	{{#deprecated}}
 	// Deprecated
 	{{/deprecated}}
-	{{name}} {{#isNullable}}*{{/isNullable}}{{{dataType}}} `json:"{{baseName}}{{^required}},omitempty{{/required}}"{{#vendorExtensions.x-go-custom-tag}} {{{.}}}{{/vendorExtensions.x-go-custom-tag}}`
+	{{name}} {{#isNullable}}*{{/isNullable}}{{#isArray}}{{#items.isString}}StringList{{/items.isString}}{{/isArray}}{{^isArray}}{{{dataType}}}{{/isArray}} `json:"{{baseName}}{{^required}},omitempty{{/required}}"{{#vendorExtensions.x-go-custom-tag}} {{{.}}}{{/vendorExtensions.x-go-custom-tag}}{{#isEnum}},gorm:"type:varchar"{{/isEnum}}`
 {{/vars}}
 }{{/isEnum}}
 
@@ -242,6 +245,12 @@ func Assert{{classname}}Constraints(obj {{classname}}) error {
 {{/items.isModel}}
 {{/isArray}}
 {{/isNullable}}
+{{#isEnum}}
+	{{name}}Options := []string{ {{#allowableValues}}{{#enumVars}}{{{value}}},{{/enumVars}}{{/allowableValues}} }
+	if !Has(obj.{{name}}, {{name}}Options) {
+		return errors.New("{{name}} is an enum, provide the corect value")
+	}
+{{/isEnum}}
 {{/Vars}}
 	return nil
 }{{/model}}{{/models}}
