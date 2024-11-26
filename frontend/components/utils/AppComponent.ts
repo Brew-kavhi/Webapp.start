@@ -18,6 +18,7 @@ export class AppComponent extends HTMLElement {
 	}
 
 	render() {
+		window.i18next = i18next;
 		this.shadow.innerHTML = `
 Content loading
 		`;
@@ -30,7 +31,6 @@ Content loading
 		window.router = router;
 		// Register the service-worker
 		window.addEventListener('load', () => {
-			window.i18next = i18next;
 			i18next.on('languageChanged', function(lng) {
 				// fire custom event
 				localStorage.setItem('preferredLanguage', lng);
