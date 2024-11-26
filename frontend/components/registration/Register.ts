@@ -36,19 +36,19 @@ class Register extends TemplatedComponent {
 		this.fields = [
 			{
 				name: 'name',
-				label: 'Name',
+				label: i18next.t('models.user.name'),
 				type: InputType.Text,
 				required: true,
 			},
 			{
 				name: 'lastName',
-				label: 'Last name',
+				label: i18next.t('models.user.last_name'),
 				type: InputType.Text,
 				required: true,
 			},
 			{
 				name: 'email',
-				label: 'E-Mail',
+				label: i18next.t('models.user.email'),
 				type: InputType.Email,
 				required: true,
 			},

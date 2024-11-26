@@ -13,7 +13,9 @@ export class TemplatedComponent extends HTMLElement {
 	}
 
 	languageChanged(e) {
-		this.render();
+		if (this.render) {
+			this.render();
+		}
 	}
 
 	addBootstrap() {
