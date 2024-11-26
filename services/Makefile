@@ -95,7 +95,7 @@ generate-compose:
 		service_name=$$(basename $$service); \
 		echo "  $$service_name-service:" >> $(COMPOSE_FILE); \
 		echo "    extends:" >> $(COMPOSE_FILE); \
-		echo "      file: ./services/$$service_name/$$service_name""_service.docker.yaml" >> $(COMPOSE_FILE); \
+		echo "      file: ./services/$$service_name/$$service_name""-service.docker.yaml" >> $(COMPOSE_FILE); \
 		echo "      service: $$service_name-service" >> $(COMPOSE_FILE); \
 	done
 
