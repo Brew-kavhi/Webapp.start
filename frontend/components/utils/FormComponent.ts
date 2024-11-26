@@ -86,7 +86,9 @@ export class FormComponent extends TemplatedComponent {
 	}
 
 	setFields(value: Array<FieldScheme>) {
-		this.dataFields = value;
+		if (value) {
+			this.dataFields = value;
+		}
 		this.renderForm();
 	}
 
@@ -106,7 +108,6 @@ export class FormComponent extends TemplatedComponent {
 		this.dataFields.forEach((element: FieldScheme) => {
 			values[element['name']] = this.inputs[element.name].value;
 			let inputValid = this.inputs[element.name].validate();
-			console.log(inputValid);
 			inputsValid = inputsValid && inputValid;
 		});
 		[valid, msg] = this.formValidation(values);
