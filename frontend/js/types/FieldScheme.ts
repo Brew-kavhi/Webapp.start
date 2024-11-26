@@ -30,4 +30,6 @@ export enum InputType {
 	Time = 'time',
 	Url = 'url',
 	Week = 'week',
+	NumberArray = 'numberarray',
+	StringArray = 'stringarray',
 }
