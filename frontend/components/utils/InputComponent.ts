@@ -59,6 +59,22 @@ export class InputComponent extends HTMLElement {
 				label.innerText = this._field.label;
 				this.container.appendChild(label);
 				break;
+			case InputType.NumberArray:
+				import('/components/utils/InputTypes/Array.ts');
+				this.input = document.createElement('array-input');
+				var label = document.createElement('label');
+				label.innerText = this._field.label;
+				this.container.appendChild(label);
+				this.input.itemType = 'number';
+				break;
+			case InputType.StringArray:
+				import('/components/utils/InputTypes/Array.ts');
+				this.input = document.createElement('array-input');
+				var label = document.createElement('label');
+				label.innerText = this._field.label;
+				this.container.appendChild(label);
+				this.input.itemType = 'text';
+				break;
 			default:
 				// render input element with adccording type
 				this.input = document.createElement('input');
@@ -97,7 +113,6 @@ export class InputComponent extends HTMLElement {
 		this.errorMessage = document.createElement('span');
 		this.errorMessage.style.color = 'red';
 		this.errorMessage.style.display = 'none';
-		this.errorMessage.textContent = 'Password must be at least 6 characters.';
 
 		this.container.appendChild(this.input);
 		this.container.appendChild(this.errorMessage);
@@ -119,7 +134,7 @@ export class InputComponent extends HTMLElement {
 		}
 		if (!this.input.validity) {
 			console.log(this);
-			return valid && true;
+			return valid;
 		}
 		if (!this.input.validity.valid) {
 			if (this.input.validity.tooShort) {
@@ -131,7 +146,7 @@ export class InputComponent extends HTMLElement {
 			return false;
 		}
 
-		return valid && true;
+		return valid;
 	}
 
 	// Clear the error message
