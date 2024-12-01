@@ -60,6 +60,9 @@ class Login extends TemplatedComponent {
 			});
 
 			if (response.ok) {
+				let data = await response.json();
+				let displayName: string = data['displayName'];
+				localStorage.setItem('displayName', displayName);
 				if (response.redirected) {
 					const redirectUrl = response.url;
 					toast.success("Login succesfull", "You are redirected");

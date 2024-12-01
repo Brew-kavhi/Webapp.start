@@ -124,7 +124,7 @@ func (userDB *UserDB) loginPassword(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w,r,"/totp-verification", http.StatusSeeOther)
 		return
 	}
-	writeJSON(w, map[string]string{"status": "success"})
+	writeJSON(w, map[string]string{"status": "success", "displayName": user.Name})
 }
 
 func (userDB *UserDB) ValidateTOTPLogin(w http.ResponseWriter, r *http.Request) {
