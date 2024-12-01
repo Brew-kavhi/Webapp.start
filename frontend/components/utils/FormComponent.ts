@@ -100,6 +100,14 @@ export class FormComponent extends TemplatedComponent {
 		});
 	}
 
+	setValue(value: T, key: string) {
+		if (this.inputs[key]) {
+			this.inputs[key].value = value;
+		} else {
+			console.log(`Key ${key} not found`);
+		}
+	}
+
 	validateInputs(): boolean {
 		let valid: boolean = false;
 		let msg: string;
