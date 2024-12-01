@@ -3,8 +3,8 @@
 import { coerceToArrayBuffer, coerceToBase64Url } from '/js/utils.js';
 
 export function requestNotificationPermission() {
-	console.log(Notification.permission);
 	if ('Notification' in window) {
+		console.log(Notification.permission);
 		Notification.requestPermission().then((permission) => {
 			if (permission === 'granted') {
 				console.log('Notification permission granted.');
