@@ -18,7 +18,10 @@ export class AppComponent extends HTMLElement {
 	}
 
 	render() {
+		const router = new Router(routes);
+		window.router = router;
 		window.i18next = i18next;
+
 		this.shadow.innerHTML = `
 Content loading
 		`;
@@ -27,8 +30,6 @@ Content loading
 	initApp() {
 		requestNotificationPermission();
 		// // Define routes
-		const router = new Router(routes);
-		window.router = router;
 		// Register the service-worker
 		window.addEventListener('load', () => {
 			i18next.on('languageChanged', function(lng) {
