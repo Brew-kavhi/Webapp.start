@@ -123,6 +123,7 @@ func GenerateJWT(user User) (string, error) {
 		"iss": "frontend_jwt_token_key",
 		"sub":  fmt.Sprintf("%d", user.ID),
 		"name": user.Name,
+		"mail": user.Email,
 		"exp":  time.Now().Add(time.Hour * 1).Unix(),
 	})
 	tokenString, err := token.SignedString(signingKey)
