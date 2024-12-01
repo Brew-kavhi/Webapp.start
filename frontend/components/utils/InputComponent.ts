@@ -31,6 +31,7 @@ export class InputComponent extends HTMLElement {
 			return;
 		}
 		this.container.setAttribute('slot', this._field.name);
+		let style = document.createElement('style');
 
 		switch (this._field.type) {
 			case InputType.Interval:
@@ -75,6 +76,31 @@ export class InputComponent extends HTMLElement {
 				this.container.appendChild(label);
 				this.input.itemType = 'text';
 				break;
+			case InputType.TextField:
+				// render input element with adccording type
+				this.input = document.createElement('textarea');
+
+				this.input.setAttribute('type', this._field.type);
+				this.input.setAttribute('name', this._field.name);
+				this.input.setAttribute('placeholder', this._field.label);
+				if (this._field.required) {
+					this.input.setAttribute('required', '');
+				}
+				if (this._field.minlength) {
+					this.input.setAttribute('minlength', this._field.minlength);
+				}
+				style.innerHTML = `
+					textarea {
+						border: 1px solid lightgray;
+					    border-radius: 5px;
+					    line-height: 1.5;
+					    padding: .375rem .75rem;
+						width: -webkit-fill-available;
+					    font-size: 1rem;
+					}
+				`;
+				this.shadowRoot?.appendChild(style);
+				break;
 			default:
 				// render input element with adccording type
 				this.input = document.createElement('input');
@@ -95,7 +121,6 @@ export class InputComponent extends HTMLElement {
 				if (this._field.max) {
 					this.input.setAttribute('max', this._field.max);
 				}
-				let style = document.createElement('style');
 				style.innerHTML = `
 					input {
 						border: 1px solid lightgray;

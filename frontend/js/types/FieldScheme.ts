@@ -15,6 +15,7 @@ export enum InputType {
 	Email = 'email',
 	Phone = 'phone',
 	Text = 'text',
+	TextField = 'text-field',
 	Number = 'number',
 	PassworConfirmation = 'password-confirmation',
 	Range = 'range',
