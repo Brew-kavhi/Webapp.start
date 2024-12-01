@@ -18,6 +18,11 @@ export class TemplatedComponent extends HTMLElement {
 		}
 	}
 
+	removeSelf() {
+		// this function does remove this content from its parent container.
+		this.shadowRoot.innerHTML = '';
+	}
+
 	addBootstrap() {
 		const style = document.createElement('style');
 		style.textContent = `${mainStyle}${bootstrap}`;
