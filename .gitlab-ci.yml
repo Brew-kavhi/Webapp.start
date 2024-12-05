@@ -15,11 +15,6 @@ variables:
 validate_changes:
   stage: validate_changes
   image: debian:bullseye-slim
-  variables:
-    GIT_STRATEGY: clone
-    GIT_DEPTH: 0
-  before_script:
-    - apt-get update && apt-get install -y git bash
   script:
     - echo "Validating changed files"
     - |
@@ -81,7 +76,6 @@ lint:
 format:
   stage: format
   script:
-    - source validation.env
     - |
       if [ "$FRONTEND_CHANGED" = true ]; then
         echo "running format for frontend"
@@ -98,7 +92,6 @@ format:
 testing:
   stage: testing
   script:
-    - source validation.env
     - |
       if [ "$FRONTEND_CHANGED" = true ]; then
         echo "running tests for frontend"
