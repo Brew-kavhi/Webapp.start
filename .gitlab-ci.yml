@@ -116,13 +116,13 @@ validate_source_branch:
     - echo "Validating source branch"
     - |
       if [ "$CI_COMMIT_REF_NAME" == "review" ]; then
-        MR_SOURCE_BRANCH=$(curl --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/merge_requests?source_branch=$CI_COMMIT_REF_NAME" | jq -r '.[0].source_branch')
+        MR_SOURCE_BRANCH=$(curl --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" "$CI_SERVER_URL/api/v4/projects/$CI_PROJECT_ID/merge_requests?target_branch=$CI_COMMIT_REF_NAME" | jq -r '.[0].source_branch')
         if [ "$MR_SOURCE_BRANCH" != "main" ]; then
           echo "Error: Changes to review branch must come from main branch. Current source branch is $MR_SOURCE_BRANCH"
           exit 1
         fi
       elif [ "$CI_COMMIT_REF_NAME" == "release" ]; then
-        MR_SOURCE_BRANCH=$(curl --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/merge_requests?source_branch=$CI_COMMIT_REF_NAME" | jq -r '.[0].source_branch')
+        MR_SOURCE_BRANCH=$(curl --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" "$CI_SERVER_URL/api/v4/projects/$CI_PROJECT_ID/merge_requests?target_branch=$CI_COMMIT_REF_NAME" | jq -r '.[0].source_branch')
         if [ "$MR_SOURCE_BRANCH" != "review" ]; then
           echo "Error: Changes to release branch must come from review branch. Current source branch is $MR_SOURCE_BRANCH"
           exit 1
@@ -135,7 +135,6 @@ validate_source_branch:
 integration_test:
   stage: integration_test
   script:
-    - source validation.env
     - |
       if [ "$FRONTEND_CHANGED" = true ]; then
         echo "Running integration tests for frontend"
@@ -152,7 +151,6 @@ integration_test:
 e2e_test:
   stage: e2e_test
   script:
-    - source validation.env
     - |
       if [ "$FRONTEND_CHANGED" = true ]; then
         echo "Running end-to-end tests for frontend"
@@ -166,7 +164,6 @@ e2e_test:
 test_deployment:
   stage: test_deployment
   script:
-    - source validation.env
     - echo "testing the deployment here"
   dependencies:
     - validate_changes
@@ -176,7 +173,6 @@ test_deployment:
 production_deployment:
   stage: production_deployment
   script:
-    - source validation.env
     - echo "deploying to prodution here"
   dependencies:
     - validate_changes
