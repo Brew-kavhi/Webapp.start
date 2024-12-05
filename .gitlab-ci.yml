@@ -14,7 +14,9 @@ variables:
 
 validate_changes:
   stage: validate_changes
-  image: debian:bullseye-slim
+  image: debian:bullseye-slim 
+  before_script:
+    - apt-get update && apt-get install -y git bash
   script:
     - echo "Validating changed files"
     - |
