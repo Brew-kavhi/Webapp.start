@@ -64,8 +64,9 @@ validate_changes:
 
 lint:
   stage: lint
+  dependencies:
+    - validate_changes
   script:
-    - source validation.env
     - |
       if [ "$FRONTEND_CHANGED" = true ]; then
         echo "Running npm run lint in $FRONTEND_FOLDER"
@@ -74,8 +75,6 @@ lint:
         echo "Running make lint in $SERVICES_FOLDER/$SERVICE_NAME"
         cd $SERVICES_FOLDER && make lint-module module=$SERVICE_NAME
       fi
-  dependencies:
-    - validate_changes
   only:
     - main
 
