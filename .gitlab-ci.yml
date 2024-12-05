@@ -109,6 +109,9 @@ testing:
 
 validate_source_branch:
   stage: validate_changes
+  image: debian:bullseye-slim
+  before_script:
+    - apt-get update && apt-get install -y curl jq
   script:
     - echo "Validating source branch"
     - |
