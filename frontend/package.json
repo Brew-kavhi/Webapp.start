@@ -196,6 +196,7 @@
     "magic-string": "^0.30.12",
     "make-dir": "^4.0.0",
     "makeerror": "^1.0.12",
+    "marked": "^15.0.3",
     "merge-stream": "^2.0.0",
     "micromatch": "^4.0.7",
     "mime-db": "^1.52.0",
