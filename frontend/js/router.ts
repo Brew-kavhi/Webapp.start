@@ -57,8 +57,9 @@ export class Router {
 
 	_matchRoute(urlSegments) {
 		// Try to find a matching route based on URL segments
+		urlSegments = urlSegments.filter((route) => route != "");
 		return this.routes.find((route) => {
-			const routePathSegments = route.path.split('/').slice(1);
+			const routePathSegments = route.path.split('/').slice(1).filter((route) => route != "");
 
 			// Check if the route has the same number of segments
 			if (routePathSegments.length !== urlSegments.length) return false;
