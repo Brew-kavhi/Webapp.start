@@ -42,5 +42,6 @@ func main() {
 		AllowCredentials: true,                                                   // Allow cookies, tokens
 	})
 
-	server.NewServer(userDB, c, webAuthn)
+	api := server.NewServer(userDB, c, webAuthn)
+	api.Start()
 }
