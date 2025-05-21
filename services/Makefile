@@ -78,11 +78,11 @@ generate-stubs:
 	go get gorm.io/driver/sqlite; \
 	go get github.com/rs/cors; \
 	go mod tidy; \
-	echo "go/api_$(module)_service.go" >> .openapi-generator-ignore; \
+	# echo "go/api_$(module)_service.go" >> .openapi-generator-ignore; \
 	sed -e 's/{{MODULE}}/$(module)/g' \
 		-e 's/{{CAP_MODULE}}/$(CAPITALIZED_NAME)/g' \
 			../../.ressources/templates/services/database.go > go/$(module)DB.go; \
-	echo "adding the databae connection to main.go"; \
+	echo "adding the database connection to main.go"; \
 
 
 	
@@ -225,6 +225,7 @@ create-service:
 		mkdir -p $(name); \
 		echo "Initializing go module"; \
 		cd $(name) && go mod init $(name); \
+		mkdir pkg; \
 		echo "Installing GORM (GO object relation manager)"; \
 		go get -u gorm.io/gorm; \
 		echo "installing dotenv environment"; \
@@ -246,8 +247,10 @@ create-service:
 			-e 's/{{name}}/$(name)/g' \
 			../../.ressources/templates/services/service.docker.yaml > $(name)-service.docker.yaml; \
 		echo "Creating $(name)_test.go for $(name)"; \
-		cp ../../.ressources/templates/services/middleware.go middleware.go; \
-		cp ../../.ressources/templates/services/utils.go utils.go; \
+		cp -a ../../.ressources/templates/services/pkg/* pkg; \
+		sed \
+			-e 's/{{MODULE}}/$(name)/g' \
+			../../.ressources/templates/services/pkg/middleware/middleware.go > pkg/middleware/middleware.go;\
 		echo 'package main\n\nimport "testing"\n\nfunc TestMain(t *testing.T) {\n\texpected := "Hello, world!"\n\tactual := "Hello, world!"\n\tif actual != expected {\n\t\tt.Errorf("expected %v, got %v", expected, actual)\n\t}\n}' > $(name)_test.go; \
 		go get github.com/stretchr/testify; \
 		echo "Next step: edit the api_scheme to your desire and then autogenerate the boiler plate code by running make generate-stubs module=$$name"; \
