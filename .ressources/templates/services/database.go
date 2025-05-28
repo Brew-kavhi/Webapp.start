@@ -36,13 +36,20 @@ func ({{MODULE}}DB *DBHandler) Get{{CAP_MODULE}}ById({{MODULE}}Id uint) (*{{CAP_
 	
 }
 
-func ({{MODULE}}DB *DBHandler) GetAll{{CAP_MODULE}}() (*[]{{CAP_MODULE}}, error) {
+func ({{MODULE}}DB *DBHandler) GetAll{{CAP_MODULE}}() ([]{{CAP_MODULE}}, error) {
 	var {{MODULE}}s []{{CAP_MODULE}}
-	if err := {{MODULE}}DB.DB.Find(&{{MODULE}}s).Error; err != nil {
+	if err := {{MODULE}}DB.DB.Find({{MODULE}}s).Error; err != nil {
 		return nil, err
 	}
-	return &{{MODULE}}s, nil
-	
+	return {{MODULE}}s, nil	
+}
+
+func ({{MODULE}}DB *DBHandler) GetWhere(whereClause string, arguments ...interface{}) ([]{{CAP_MODULE}}, error) {
+	var {{MODULE}}s []{{CAP_MODULE}}
+	if err := {{MODULE}}DB.DB.Where(whereClause, arguments...).Find({{MODULE}}s).Error; err != nil {
+		return nil, err
+	}
+	return {{MODULE}}s, nil
 }
 
 func ({{MODULE}}DB *DBHandler) Create{{CAP_MODULE}}({{MODULE}} *{{CAP_MODULE}}) (error) {
