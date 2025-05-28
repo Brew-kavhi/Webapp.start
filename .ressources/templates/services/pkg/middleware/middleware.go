@@ -8,7 +8,7 @@ import (
 	"{{MODULE}}/pkg/utils"
 )
 
-func checkAuthMiddleware(next http.Handler) http.Handler {
+func CheckAuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		cookie, err := r.Cookie("jwt")
 		if err != nil {
@@ -22,7 +22,9 @@ func checkAuthMiddleware(next http.Handler) http.Handler {
 		}
 		// Store the user ID in the request context
 		ctx := context.WithValue(r.Context(), "user_id", fmt.Sprint(userID))
-		ctx = context.WithValue(ctx, "user_email", userEmail)
+		if userEmail != "" {
+			ctx = context.WithValue(ctx, "user_email", userEmail)
+		}
 
 		// Pass the context to the next handler
 		next.ServeHTTP(w, r.WithContext(ctx))

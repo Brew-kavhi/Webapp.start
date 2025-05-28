@@ -2,7 +2,7 @@ import fs from 'fs/promises';
 import MagicString from 'magic-string';
 
 export default function htmlToTemplatePlugin() {
-	var moduleName = '';
+	var moduleName: string | undefined  = '';
 	return {
 		name: 'html-to-template-plugin',
 		async load(id: string) {
@@ -10,7 +10,7 @@ export default function htmlToTemplatePlugin() {
 				const path = id.replace('\x00virtual:','');
 				// Read and escape HTML content
 				this.addWatchFile(
-					'/home/arbeit/projects/brew.kavhi/frontend/' + path + '.html'
+					process.cwd() + '/' + path + '.html'
 				);
 				const htmlContent = await fs.readFile(path + '.html', 'utf-8');
 				const escapedContent = htmlContent;

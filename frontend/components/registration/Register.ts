@@ -81,6 +81,7 @@ class Register extends TemplatedComponent {
 		if (e.type == 'form-submitted') {
 			e.preventDefault();
 			var user = e.detail;
+			console.log(USER_API_HOST);
 			this.userAPI
 				.createUser(user)
 				.then((response) => {

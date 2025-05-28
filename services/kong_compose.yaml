@@ -1,0 +1,44 @@
+_format_version: '2.1'
+services:
+  - name: api-for-service-coffee
+    url: http://coffee-service:8080
+    routes:
+      - name: api-for-service-coffee
+        paths:
+          - /api/Coffee
+        strip_path: true
+        plugins:
+          - name: jwt
+            config:
+              cookie_names:
+                - jwt
+  - name: api-for-service-sensors
+    url: http://sensors-service:8080
+    routes:
+      - name: api-for-service-sensors
+        paths:
+          - /api/Sensors
+        strip_path: true
+        plugins:
+          - name: jwt
+            config:
+              cookie_names:
+                - jwt
+  - name: user-api
+    url: undefined:10001
+    routes:
+      - name: user-route
+        paths:
+          - /api/user
+        strip_path: true
+  - name: frontend
+    url: undefined:undefined
+    routes:
+      - name: frontend-route
+        paths:
+          - /
+        strip_path: false
+consumers:
+  - username: Frontend
+    jwt_secrets:
+      - key: frontend_jwt_token_key

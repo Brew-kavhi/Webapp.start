@@ -1,0 +1,287 @@
+openapi: 3.0.0
+info:
+  title: Merged API
+  version: 1.0.0
+servers:
+  - url: undefined:8000
+paths:
+  /Coffee/{id}:
+    get:
+      tags:
+        - Coffee
+      summary: Get instance of Coffee
+      description: Get instance of Coffee by id
+      operationId: getCoffee
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: One instances of Coffee
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoffeeResponse'
+        '400':
+          description: Invalid ID supplied
+        '401':
+          description: Coffee not found
+    put:
+      tags:
+        - Coffee
+      summary: Update instance of Coffee
+      operationId: updateCoffee
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Update a user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCoffeeRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UpdateCoffeeRequest'
+      responses:
+        '200':
+          description: One instances of Coffee
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoffeeResponse'
+        '400':
+          description: Invalid Input
+        '422':
+          description: Validation exception
+    delete:
+      tags:
+        - Coffee
+      summary: Deletes a Coffee
+      operationId: deleteCoffee
+      parameters:
+        - name: id
+          in: path
+          description: Coffee id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '400':
+          description: Invalid value
+  /Coffee:
+    get:
+      tags:
+        - Coffee
+      summary: Get all instances of Coffee
+      operationId: listCoffee
+      responses:
+        '200':
+          description: A list of instances of Coffee
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CoffeeResponse'
+    post:
+      tags:
+        - Coffee
+      summary: Create a new instance of Coffee
+      operationId: createCoffee
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewCoffeeRequest'
+      responses:
+        '201':
+          description: Instance of Coffee created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Coffee'
+  /Sensors/{id}:
+    get:
+      tags:
+        - Sensors
+      summary: Get instance of Sensors
+      description: Get instance of Sensors by id
+      operationId: getSensors
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: One instances of Sensors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensorsResponse'
+        '400':
+          description: Invalid ID supplied
+        '401':
+          description: Sensors not found
+    put:
+      tags:
+        - Sensors
+      summary: Update instance of Sensors
+      operationId: updateSensors
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Update a user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSensorsRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UpdateSensorsRequest'
+      responses:
+        '200':
+          description: One instances of Sensors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensorsResponse'
+        '400':
+          description: Invalid Input
+        '422':
+          description: Validation exception
+    delete:
+      tags:
+        - Sensors
+      summary: Deletes a Sensors
+      operationId: deleteSensors
+      parameters:
+        - name: id
+          in: path
+          description: Sensors id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '400':
+          description: Invalid value
+  /Sensors:
+    get:
+      tags:
+        - Sensors
+      summary: Get all instances of Sensors
+      operationId: listSensors
+      responses:
+        '200':
+          description: A list of instances of Sensors
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SensorsResponse'
+    post:
+      tags:
+        - Sensors
+      summary: Create a new instance of Sensors
+      operationId: createSensors
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewSensorsRequest'
+      responses:
+        '201':
+          description: Instance of Sensors created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sensors'
+components:
+  schemas:
+    Coffee:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        hr_id:
+          type: string
+        producer:
+          type: string
+    CoffeeResponse:
+      type: object
+      properties:
+        hr_id:
+          type: string
+        producer:
+          type: string
+    NewCoffeeRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        hr_id:
+          type: string
+    UpdateCoffeeRequest:
+      type: object
+      properties:
+        hr_id:
+          type: string
+        producer:
+          type: string
+    Sensors:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        hr_id:
+          type: string
+        producer:
+          type: string
+    SensorsResponse:
+      type: object
+      properties:
+        hr_id:
+          type: string
+        producer:
+          type: string
+    NewSensorsRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        hr_id:
+          type: string
+    UpdateSensorsRequest:
+      type: object
+      properties:
+        hr_id:
+          type: string
+        producer:
+          type: string
