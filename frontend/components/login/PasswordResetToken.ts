@@ -68,6 +68,7 @@ export class PasswordResetToken extends TemplatedComponent {
 					'Content-Type': 'application/json',
 				},
 				body: JSON.stringify({ username: email, password: password }),
+				credentials: 'include', // Ensure cookies are included in requests/responses
 			}).then((response) =>{
 				if (response.status == 200) {
 					toast.success("Success", "Successful validation");

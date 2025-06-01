@@ -50,13 +50,14 @@ class Login extends TemplatedComponent {
 			const username = this.shadowRoot.getElementById('username').value;
 			const password = this.shadowRoot.getElementById('password').value;
 
-			// Send registration request
+			// Send login request
 			const response = await fetch(`${USER_API_HOST}/auth/login/password`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
 				},
 				body: JSON.stringify({ username, password }),
+				credentials: 'include', // Ensure cookies are included in requests/responses
 			});
 
 			if (response.ok) {

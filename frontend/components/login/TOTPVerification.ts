@@ -44,7 +44,7 @@ class TOTPVerification extends TemplatedComponent {
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				withCredentials: true,
+				credentials: 'include', // Ensure cookies are included in requests/responses
 				body: JSON.stringify({"totp_code":code }),
 			});
 			console.log(response);

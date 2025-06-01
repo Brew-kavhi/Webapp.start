@@ -41,6 +41,7 @@ export class ResetPassword extends TemplatedComponent {
 					'Content-Type': 'application/json',
 				},
 				body: JSON.stringify({ username }),
+				credentials: 'include', // Ensure cookies are included in requests/responses
 			});
 			console.log(response);
 

@@ -97,6 +97,7 @@ export function uploadCamera(
 			const response = await fetch(url, {
 				method: 'POST',
 				body: formData,
+				credentials: 'include', // Ensure cookies are included in requests/responses
 			});
 
 			const result = await response.json();
@@ -114,7 +115,7 @@ export async function registerUserBiometricCredentials(
 	// Request a registration challenge from the server
 	const response = await fetch(`${registerChallengeUrl}`, {
 		method: 'GET',
-		withCredentials: true,
+		credentials: 'include', // Ensure cookies are included in requests/responses
 		headers: {
 			'Content-Type': 'application/json',
 		},
@@ -179,7 +180,8 @@ export async function authenticateUserBiometricCredentials(
 	const response = await fetch(`${loginChallengeUrl}`, {
 		method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({username: username})
+		body: JSON.stringify({username: username}),
+		credentials: 'include', // Ensure cookies are included in requests/responses
 	});
 	const options = await response.json();
 
@@ -219,6 +221,7 @@ export async function authenticateUserBiometricCredentials(
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(credentialJSON),
+			credentials: 'include', // Ensure cookies are included in requests/responses
 		});
 
 		const authResult = await authResponse.json();
