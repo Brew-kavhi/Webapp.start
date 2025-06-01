@@ -76,6 +76,7 @@ func (server *Server) loginPassword(w http.ResponseWriter, r *http.Request) {
 	var creds models.PasswordCredentials
 	err := json.NewDecoder(r.Body).Decode(&creds)
 	if err != nil {
+		fmt.Println("Invalid request payload on password login")
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
@@ -83,7 +84,7 @@ func (server *Server) loginPassword(w http.ResponseWriter, r *http.Request) {
 	// Retrieve the user from the database
 	user, err := server.users.GetUser(creds.Username)
 	if err != nil {
-		fmt.Println("User does not exist")
+		fmt.Println("User trying to login does not exist")
 		http.Error(w, "User not found", http.StatusNotFound)
 		return
 	}
@@ -91,6 +92,7 @@ func (server *Server) loginPassword(w http.ResponseWriter, r *http.Request) {
 	// Compare the password with the stored hash
 	err = utils.CheckPassword(user.PasswordHash, creds.Password)
 	if err != nil {
+		fmt.Println("user provided wrong password when logging in")
 		http.Error(w, "Invalid password", http.StatusUnauthorized)
 		return
 	}
@@ -99,6 +101,7 @@ func (server *Server) loginPassword(w http.ResponseWriter, r *http.Request) {
 		// Generate a JWT token for the user
 		token, err := utils.GenerateJWT(*user, server.getSigningKey())
 		if err != nil {
+			fmt.Println("No JWT Token could be generated")
 			http.Error(w, "Error generating token", http.StatusInternalServerError)
 			return
 		}
