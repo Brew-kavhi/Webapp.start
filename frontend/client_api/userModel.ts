@@ -97,7 +97,7 @@ export const UserParamsCreator = function(configuration?: Configuration) {
             localVarHeaderParameter['Content-Type'] = 'application/json';
     return {
         createUser: async (user?: User, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = '/auth/register';
+            const localVarPath = '/user/new';
             const localVarUrlObj = new URL(localVarPath, USER_API_HOST);
             const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
 
