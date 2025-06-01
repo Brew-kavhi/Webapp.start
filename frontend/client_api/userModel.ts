@@ -1,5 +1,5 @@
 import { AxiosInstance, AxiosPromise, RawAxiosRequestConfig } from 'axios';
-import type { Configuration } from './configuration';
+import type { Configuration, BaseOptions } from './configuration';
 import { RequestArgs, BASE_PATH, operationServerMap, BaseAPI } from './base';
 import { USER_API_HOST } from '../js/const/host';
 import { createRequestFunction, serializeDataIfNeeded, setSearchParams, toPathString } from './common';
@@ -87,14 +87,11 @@ export class User {
 }
 
 export const UserParamsCreator = function(configuration?: Configuration) {
-        let baseOptions;
-        if (configuration) {
-            baseOptions = configuration.baseOptions;
-        }
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
+    let baseOptions: BaseOptions | undefined = configuration?.baseOptions;
+    const localVarHeaderParameter = {} as any;
+    const localVarQueryParameter = {} as any;
 
-            localVarHeaderParameter['Content-Type'] = 'application/json';
+    localVarHeaderParameter['Content-Type'] = 'application/json';
     return {
         createUser: async (user?: User, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = '/user/new';
@@ -103,7 +100,7 @@ export const UserParamsCreator = function(configuration?: Configuration) {
 
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            let headersFromBaseOptions = baseOptions?.headers ?? {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(user, localVarRequestOptions, configuration)
 
@@ -118,7 +115,7 @@ export const UserParamsCreator = function(configuration?: Configuration) {
             const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            let headersFromBaseOptions = baseOptions?.headers ?? {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(deleteUserReq, localVarRequestOptions, configuration)
 
@@ -133,7 +130,7 @@ export const UserParamsCreator = function(configuration?: Configuration) {
             const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            let headersFromBaseOptions = baseOptions?.headers ?? {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded({}, localVarRequestOptions, configuration)
 
@@ -148,7 +145,7 @@ export const UserParamsCreator = function(configuration?: Configuration) {
             const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            let headersFromBaseOptions = baseOptions?.headers ?? {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(user, localVarRequestOptions, configuration)
 
@@ -163,7 +160,7 @@ export const UserParamsCreator = function(configuration?: Configuration) {
             const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            let headersFromBaseOptions = baseOptions?.headers ?? {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(req, localVarRequestOptions, configuration)
 
@@ -220,7 +217,7 @@ export const UserAPIFactory = function (configuration?: Configuration, basePath?
         deleteUser(deleteUserReq?: DeleteUserRequest, options?: RawAxiosRequestConfig): AxiosPromise<User> {
             return userFp.deleteUser(deleteUserReq, options).then((request) => request(axios, basePath));
         },
-        getUser(ptions?: RawAxiosRequestConfig): AxiosPromise<User> {
+        getUser(options?: RawAxiosRequestConfig): AxiosPromise<User> {
             return userFp.getUser(options).then((request) => request(axios, basePath));
         },
         updateUser(user?: User, options?: RawAxiosRequestConfig): AxiosPromise<User> {

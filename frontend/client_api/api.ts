@@ -13,7 +13,7 @@
  */
 
 
-import type { Configuration } from './configuration';
+import type { Configuration, BaseOptions } from './configuration';
 import type { AxiosPromise, AxiosInstance, RawAxiosRequestConfig } from 'axios';
 import globalAxios from 'axios';
 // Some imports not used depending on template conditions
@@ -205,10 +205,7 @@ export const CoffeeApiAxiosParamCreator = function (configuration?: Configuratio
             const localVarPath = `/Coffee`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
+            let baseOptions: BaseOptions | undefined = configuration?.baseOptions;
 
             const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
@@ -219,7 +216,7 @@ export const CoffeeApiAxiosParamCreator = function (configuration?: Configuratio
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            let headersFromBaseOptions = baseOptions?.headers ?? {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(newCoffeeRequest, localVarRequestOptions, configuration)
 
@@ -254,7 +251,7 @@ export const CoffeeApiAxiosParamCreator = function (configuration?: Configuratio
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            let headersFromBaseOptions = baseOptions?.headers ?? {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
@@ -288,7 +285,7 @@ export const CoffeeApiAxiosParamCreator = function (configuration?: Configuratio
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            let headersFromBaseOptions = baseOptions?.headers ?? {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
@@ -318,7 +315,7 @@ export const CoffeeApiAxiosParamCreator = function (configuration?: Configuratio
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            let headersFromBaseOptions = baseOptions?.headers ?? {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
@@ -355,7 +352,7 @@ export const CoffeeApiAxiosParamCreator = function (configuration?: Configuratio
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            let headersFromBaseOptions = baseOptions?.headers ?? {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(updateCoffeeRequest, localVarRequestOptions, configuration)
 
